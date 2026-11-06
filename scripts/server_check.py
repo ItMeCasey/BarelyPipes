@@ -81,8 +81,7 @@ def check(layer):
     if not done:
         # Show why, so a CI log is enough to see what went wrong.
         print("---- last lines of the server log ----")
-        print("
-".join(log[-60:]))
+        print(chr(10).join(log[-60:]))
         return f"SERVER FAIL {layer}: server never reported Done (see {run / 'server_check.log'})"
     if not mod_seen:
         return f"SERVER FAIL {layer}: log never lists the barelypipes mod as loaded"
