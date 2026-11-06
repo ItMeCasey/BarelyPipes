@@ -132,6 +132,7 @@
   "smwti.barelypipes.no_sides": "No side is connected",
   "smwti.barelypipes.not_connected": "Not connected",
   "smwti.barelypipes.others": "Also in this bundle: %s",
+  "smwti.barelypipes.pipes": "Pipes: %s",
   "smwti.barelypipes.plug": "Plug: %s side",
   "smwti.barelypipes.priority": "Priority: %s",
   "smwti.barelypipes.side_mode": "%s (%s)",

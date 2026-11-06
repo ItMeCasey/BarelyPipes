@@ -52,7 +52,7 @@ public final class PipeLookInfo {
     /**
      * The answer.
      *
-     * @param type  the pipe under the point
+     * @param type  the pipe under the point (for a junction, the nearest one: the overlay should not name it)
      * @param tier  its tier ({@link PipeTiers#STORAGE_TIER} for the storage pipe, iron for untiered pipes)
      * @param part  which part of it
      * @param face  the side of an arm or plug, or {@code null} for a core or junction
@@ -100,6 +100,16 @@ public final class PipeLookInfo {
         }
         if (pipe == null) {
             return null;
+        }
+
+        if (part == Part.JUNCTION) {
+            // The junction belongs to no single pipe: say what it is and list every pipe in the bundle.
+            List<Text> all = new ArrayList<>();
+            for (PipeType each : bundle.set().types()) {
+                all.add(env.pipeName(each, bundle.tier(each.lane())));
+            }
+            return new Look(pipe, bundle.tier(pipe.lane()), part, null,
+                    List.of(Text.of(P + "junction"), Text.of(P + "pipes", all)));
         }
 
         int lane = pipe.lane();

@@ -213,7 +213,7 @@ def lang():
         ("filter_whitelist", "Filter: whitelist, %s listed"), ("filter_blacklist", "Filter: blacklist, %s listed"),
         ("filter_whitelist_empty", "Filter: whitelist, empty (stops everything)"),
         ("filter_blacklist_empty", "Filter: blacklist, empty (lets everything through)"),
-        ("priority", "Priority: %s"), ("others", "Also in this bundle: %s"),
+        ("priority", "Priority: %s"), ("others", "Also in this bundle: %s"), ("pipes", "Pipes: %s"),
     ]:
         out[f"smwti.{MODID}.{key}"] = text
     for k in list(out):

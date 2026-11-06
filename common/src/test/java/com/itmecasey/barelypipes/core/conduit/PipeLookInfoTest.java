@@ -189,6 +189,20 @@ class PipeLookInfoTest {
     }
 
     @Test
+    void aJunctionListsEveryPipeAndNamesNone() {
+        BundleState bundle = bundle();
+        bundle.setConnection(PipeType.ITEM.lane(), Face.NORTH, true, false);
+        Box junction = ConduitLayout.of(bundle).pieces().stream()
+                .filter(p -> p.kind() == ConduitLayout.Kind.JUNCTION).findFirst().orElseThrow().box();
+        double[] c = center(junction);
+        Look look = PipeLookInfo.of(bundle, new EndpointSettings(), c[0], c[1], c[2], ENV);
+        assertEquals(Part.JUNCTION, look.part());
+        assertEquals(Text.of("smwti.barelypipes.junction"), look.lines().get(0));
+        assertEquals(Text.of("smwti.barelypipes.pipes", List.of(Text.of("pipe", "fluid", "iron"), Text.of("pipe", "item", "gold"))),
+                look.lines().get(1));
+    }
+
+    @Test
     void anEmptyBundleHasNoLook() {
         assertNull(PipeLookInfo.of(new BundleState(), new EndpointSettings(), 8, 8, 8, ENV));
     }
