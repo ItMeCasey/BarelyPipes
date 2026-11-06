@@ -225,6 +225,21 @@ public final class ShotTour {
         shoot("pipe_screen_energy", 40);
         then(2, () -> onServer(srv -> srv.getPlayerList().getPlayers().get(0).closeContainer()));
 
+        // The item pipe screen again with a Filter and a Priority upgrade installed, so both side panels show.
+        then(10, () -> onServer(srv -> {
+            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) srv.overworld().getBlockEntity(new BlockPos(cx, ground, 0));
+            int lane = PipeType.ITEM.lane();
+            entity.endpoints().install(lane, Face.WEST, com.itmecasey.barelypipes.core.conduit.EndpointSettings.Upgrade.FILTER);
+            entity.endpoints().install(lane, Face.WEST, com.itmecasey.barelypipes.core.conduit.EndpointSettings.Upgrade.PRIORITY);
+            entity.changed();
+            PipeConfigMenu.open(srv.getPlayerList().getPlayers().get(0), entity, PipeType.ITEM, Face.WEST);
+        }));
+        shoot("pipe_screen_item_panels", 40);
+        then(2, () -> onServer(srv -> srv.getPlayerList().getPlayers().get(0).closeContainer()));
+
+        planOutlines();
+        planPlugArrows();
+
         // BarelyStorage: a rack, a bus cable, a storage pipe and a chest.
         if (com.itmecasey.barelypipes.conduit.transfer.StorageLink.loaded()) {
             planStorage();
@@ -234,6 +249,84 @@ public final class ShotTour {
             stage = Stage.DONE;
             Minecraft.getInstance().stop();
         });
+    }
+
+    /** One fluid pipe from a tank to another pipe: the vanilla outline with the crosshair on a plug, an arm and the core. */
+    private static void planOutlines() {
+        int ox = 22;
+        then(4, () -> onServer(srv -> {
+            srv.overworld().setBlock(new BlockPos(ox, ground, 1), DevHooks.TEST_TANK.get().defaultBlockState(), Block.UPDATE_ALL);
+            ConduitBundleBlockEntity far = place(new BlockPos(ox, ground, -1));
+            far.addPipe(PipeType.FLUID, Tier.IRON);
+            ConduitBundleBlockEntity entity = place(new BlockPos(ox, ground, 0));
+            entity.addPipe(PipeType.FLUID, Tier.IRON);
+            entity.addPipe(PipeType.ITEM, Tier.GOLD);
+            entity.refreshConnections();
+            far.refreshConnections();
+            entity.changed();
+        }));
+        then(10, () -> onServer(srv -> {
+            BlockPos pos = new BlockPos(ox, ground, 0);
+            var state = srv.overworld().getBlockState(pos);
+            var shape = state.getShape(srv.overworld(), pos);
+            LOGGER.info("BARELYPIPES-SHOTS shape boxes (pixels): {}", shape.toAabbs().stream().map(b -> String.format(Locale.ROOT,
+                    "[%.2f %.2f %.2f %.2f %.2f %.2f]", b.minX * 16, b.minY * 16, b.minZ * 16, b.maxX * 16, b.maxY * 16, b.maxZ * 16)).toList());
+            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) srv.overworld().getBlockEntity(pos);
+            // Real vanilla rays through the shape, from the east, at y = fluid pipe row, at three depths.
+            double[][] aims = {{0.88, 0}, {0.66, 0}, {0.5, 0}};
+            String[] names = {"plug", "arm", "core"};
+            for (int i = 0; i < 3; i++) {
+                for (double y : new double[] {0.5 - 0.1875, 0.5 + 0.1875}) {
+                    Vec3 from = new Vec3(ox + 2.0, ground + y, aims[i][0]);
+                    Vec3 to = new Vec3(ox + 0.0, ground + y, aims[i][0]);
+                    var hit = shape.clip(from, to, pos);
+                    if (hit == null) {
+                        LOGGER.info("BARELYPIPES-SHOTS ray {} y={} misses", names[i], y);
+                        continue;
+                    }
+                    Vec3 local = hit.getLocation().subtract(ox, ground, 0).scale(16.0);
+                    LOGGER.info("BARELYPIPES-SHOTS ray {} y={} local=({}, {}, {}) -> {}", names[i], y, String.format(Locale.ROOT, "%.2f", local.x),
+                            String.format(Locale.ROOT, "%.2f", local.y), String.format(Locale.ROOT, "%.2f", local.z),
+                            com.itmecasey.barelypipes.conduit.config.PipeConfigActions.resolveTarget(entity.bundle(), local.x, local.y, local.z));
+                }
+            }
+        }));
+        // Plug: block z 12..16 is world z 0.75..1.0; arm: z 9.5..12; core: z 6.5..9.5.
+        then(4, () -> moveTo(new Vec3(ox + 1.2, ground + 0.75, 0.88), new Vec3(ox + 0.5, ground + 0.5, 0.88)));
+        shoot("outline_plug", 30);
+        then(2, () -> moveTo(new Vec3(ox + 1.2, ground + 0.75, 0.66), new Vec3(ox + 0.5, ground + 0.5, 0.66)));
+        shoot("outline_arm", 6);
+        then(2, () -> moveTo(new Vec3(ox + 1.2, ground + 0.75, 0.5), new Vec3(ox + 0.5, ground + 0.5, 0.5)));
+        shoot("outline_core", 6);
+        then(2, () -> moveTo(new Vec3(ox + 0.5, ground + 1.4, -0.9), new Vec3(ox + 0.5, ground + 0.5, 0.5)));
+        shoot("outline_overview", 6);
+    }
+
+    /** Fluid and energy pipes on a tank in every plug arrow combination, seen from the side to show the glyph faces. */
+    private static void planPlugArrows() {
+        ConnectionMode[] fluid = {ConnectionMode.IMPORT, ConnectionMode.EXPORT, ConnectionMode.OPEN, ConnectionMode.OFF};
+        ConnectionMode[] energy = {ConnectionMode.EXPORT, ConnectionMode.OPEN, ConnectionMode.OFF, ConnectionMode.IMPORT};
+        then(4, () -> onServer(srv -> {
+            for (int i = 0; i < 4; i++) {
+                int bx = 26 + i * 3;
+                srv.overworld().setBlock(new BlockPos(bx, ground, 1), DevHooks.TEST_TANK.get().defaultBlockState(), Block.UPDATE_ALL);
+                ConduitBundleBlockEntity entity = place(new BlockPos(bx, ground, 0));
+                entity.addPipe(PipeType.FLUID, Tier.values()[i % 3]);
+                entity.addPipe(PipeType.ENERGY, Tier.values()[(i + 1) % 3]);
+                entity.refreshConnections();
+                entity.bundle().setMode(PipeType.FLUID.lane(), Face.SOUTH, fluid[i]);
+                entity.bundle().setMode(PipeType.ENERGY.lane(), Face.SOUTH, energy[i]);
+                entity.refreshConnections();
+                entity.changed();
+            }
+        }));
+        for (int i = 0; i < 4; i++) {
+            int bx = 26 + i * 3;
+            then(4, () -> moveTo(new Vec3(bx + 0.5 - 1.5, ground + 0.75, -0.15), new Vec3(bx + 0.5, ground + 0.5, 0.76)));
+            shoot("plug_arrows_" + fluid[i].name().toLowerCase(Locale.ROOT), i == 0 ? 30 : 6);
+            then(2, () -> moveTo(new Vec3(bx + 0.5 + 1.5, ground + 0.75, -0.15), new Vec3(bx + 0.5, ground + 0.5, 0.76)));
+            shoot("plug_arrows_" + fluid[i].name().toLowerCase(Locale.ROOT) + "_right", 6);
+        }
     }
 
     private static void planStorage() {

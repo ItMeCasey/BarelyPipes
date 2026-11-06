@@ -197,7 +197,7 @@ public final class BundleBlockStateModel implements BlockStateModel {
             if (face == piece.face()) {
                 material = materials.node();
             } else if (face == piece.face().opposite()) {
-                material = materials.pipe(type, tier, PipeTextures.PLUG_FACE);
+                material = materials.pipe(type, tier, PipeTextures.plugFace(piece.mode()));
             } else {
                 material = materials.pipe(type, tier, PipeTextures.vertical(piece.axis(), face) ? "plug_v" : "plug_h");
             }

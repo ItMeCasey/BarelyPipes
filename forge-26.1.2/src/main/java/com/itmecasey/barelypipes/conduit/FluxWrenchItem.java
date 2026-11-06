@@ -1,5 +1,6 @@
 package com.itmecasey.barelypipes.conduit;
 
+import com.itmecasey.barelypipes.conduit.config.PipeConfigActions;
 import com.itmecasey.barelypipes.core.conduit.ConduitLayout;
 import com.itmecasey.barelypipes.core.conduit.ConnectionMode;
 import com.itmecasey.barelypipes.core.conduit.DistributionMode;
@@ -51,7 +52,8 @@ public class FluxWrenchItem extends Item {
             return InteractionResult.CONSUME;
         }
 
-        Face face = Face.byIndex(context.getClickedFace().get3DDataValue());
+        Face face = PipeConfigActions.faceOf(entity.bundle(), local.x, local.y, local.z,
+                Face.byIndex(context.getClickedFace().get3DDataValue()));
         ConnectionMode next = entity.bundle().mode(pipe.lane(), face).next();
         entity.bundle().setMode(pipe.lane(), face, next);
         entity.refreshConnections();
