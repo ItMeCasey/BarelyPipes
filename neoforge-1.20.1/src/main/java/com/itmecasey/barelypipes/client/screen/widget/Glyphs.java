@@ -3,6 +3,7 @@ package com.itmecasey.barelypipes.client.screen.widget;
 import com.itmecasey.barelypipes.Ids;
 import com.itmecasey.barelypipes.core.Tier;
 import com.itmecasey.barelypipes.core.conduit.ConnectionMode;
+import com.itmecasey.barelypipes.core.conduit.GlyphCentering;
 import com.itmecasey.barelypipes.core.conduit.PipeType;
 import com.itmecasey.barelypipes.core.machine.SideResource;
 import java.util.HashMap;
@@ -33,14 +34,22 @@ public final class Glyphs {
     public static final int BLOCKED_COLOR = 0xFFC04040;
 
     private static final int TEXTURE = 16;
-    /** From a glyph's center to its texture's corner: the picture is 13 wide and starts at pixel 1. */
-    private static final int CENTER_OFFSET = 7;
+    /** From a glyph's middle pixel to its texture's corner: the picture is 13 wide and starts at pixel 1. */
+    private static final int CENTER_OFFSET = GlyphCentering.MIDDLE;
     private static final Map<String, ResourceLocation> TEXTURES = new HashMap<>();
 
     private Glyphs() {
     }
 
-    /** Draws the glyph called {@code name} with its picture centered on the given point. */
+    /**
+     * Draws the glyph so its picture sits in the middle of the box {@code x}, {@code y}, {@code width}
+     * by {@code height}: exactly in the middle when both sizes are odd (see {@link GlyphCentering}).
+     */
+    public static void drawIn(GuiGraphics graphics, String name, int x, int y, int width, int height, int color) {
+        draw(graphics, name, GlyphCentering.middle(x, width), GlyphCentering.middle(y, height), color);
+    }
+
+    /** Draws the glyph called {@code name} with its picture's middle pixel on the given pixel. */
     public static void draw(GuiGraphics graphics, String name, int centerX, int centerY, int color) {
         ResourceLocation texture = TEXTURES.computeIfAbsent(name, key -> Ids.mod("textures/gui/glyph/" + key + ".png"));
         // The glyphs are white; the shader color tints them, and is put back afterwards.

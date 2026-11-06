@@ -79,7 +79,7 @@ public class GlyphButton extends AbstractButton {
         if (isHovered()) {
             graphics.fill(x + 2, y + 2, x + width - 2, y + height - 2, HOVER);
         }
-        Glyphs.draw(graphics, glyph, x + width / 2, y + height / 2, fill != 0 ? Glyphs.WHITE : Glyphs.DARK);
+        Glyphs.drawIn(graphics, glyph, x, y, width, height, fill != 0 ? Glyphs.WHITE : Glyphs.DARK);
         if (selected.getAsBoolean()) {
             // A colored ring with a black one outside it, so it shows on any background.
             graphics.renderOutline(x - 1, y - 1, width + 2, height + 2, outline);
