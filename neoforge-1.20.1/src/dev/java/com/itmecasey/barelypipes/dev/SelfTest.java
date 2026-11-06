@@ -8,6 +8,13 @@ import com.itmecasey.barelypipes.core.conduit.ConnectionMode;
 import com.itmecasey.barelypipes.core.conduit.Face;
 import com.itmecasey.barelypipes.core.conduit.PipeType;
 import com.itmecasey.barelypipes.registry.ModBlocks;
+import com.itmecasey.barelypipes.compat.look.PipeLookAdapter;
+import com.itmecasey.barelypipes.core.Tier;
+import com.itmecasey.barelypipes.core.conduit.Box;
+import com.itmecasey.barelypipes.core.conduit.PipeLookInfo;
+import com.itmecasey.barelypipes.registry.ModItems;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -139,6 +146,60 @@ public final class SelfTest {
         bundleA.addPipe(PipeType.ENERGY);
         List<ItemStack> drops = Block.getDrops(state, level, a, bundleA);
         check("breaking a bundle drops one item per pipe", drops.size() == bundleA.bundle().set().size());
+
+        checkLookInfo();
+    }
+
+    /** What the look-at overlays say about a gold item pipe on a chest: the exact pipe, side, mode, neighbor and rate. */
+    private static void checkLookInfo() {
+        BlockPos pos = origin.offset(3, 0, 6);
+        level.setBlock(pos.south(), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.CONDUIT_BUNDLE.get().defaultBlockState(), Block.UPDATE_ALL);
+        ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) level.getBlockEntity(pos);
+        if (entity == null) {
+            check("look: the test bundle exists", false);
+            return;
+        }
+        entity.addPipe(PipeType.ITEM, Tier.GOLD);
+        entity.addPipe(PipeType.FLUID, Tier.IRON);
+        entity.refreshConnections();
+        int lane = PipeType.ITEM.lane();
+        check("look: the gold item pipe attaches to the chest", entity.bundle().isExternal(lane, Face.SOUTH));
+
+        // Aim at the inner end of the item pipe's arm toward the chest (the plug sits on its outer end).
+        Box arm = ConduitLayout.of(entity.bundle()).armOf(PipeType.ITEM, Face.SOUTH);
+        Vec3 hit = new Vec3(pos.getX() + (arm.minX() + arm.maxX()) / 32.0, pos.getY() + (arm.minY() + arm.maxY()) / 32.0,
+                pos.getZ() + (arm.minZ() + 1.0) / 16.0);
+        PipeLookInfo.Look look = PipeLookAdapter.look(level, pos, entity, hit);
+        check("look: names the exact pipe, its tier and the part", look != null && look.type() == PipeType.ITEM
+                && look.tier() == Tier.GOLD && look.part() == PipeLookInfo.Part.ARM && look.face() == Face.SOUTH);
+        if (look == null) {
+            return;
+        }
+        check("look: the title is the pipe item", ModItems.pipe(look.type(), look.tier()).get().getDescriptionId()
+                .equals("item.barelypipes.gold_item_pipe") && PipeLookAdapter.stack(look).is(ModItems.pipe(PipeType.ITEM, Tier.GOLD).get()));
+        List<PipeLookInfo.Text> lines = look.lines();
+        check("look: the first line says arm and the side",
+                lines.get(0).key().equals("smwti.barelypipes.arm") && lines.get(0).args().get(0).equals(PipeLookInfo.Text.of("face.barelypipes.south")));
+        check("look: the mode is Open", lines.get(1).args().get(0).equals(PipeLookInfo.Text.of("connection_mode.barelypipes.open")));
+        check("look: it says what it connects to", lines.get(2).equals(PipeLookInfo.Text.of("smwti.barelypipes.connected_to",
+                PipeLookInfo.Text.of("block.minecraft.chest"))));
+        check("look: the throughput is the gold item rate (8 items every 12 ticks)", lines.get(3).args().get(0)
+                .equals(PipeLookInfo.Text.of("screen.barelypipes.pipe_config.rate_items", "8", "12")));
+        check("look: the lines turn into components", PipeLookAdapter.lines(look).size() == lines.size());
+
+        // The other pipe is the other pipe: the fluid pipe's core.
+        Box core = ConduitLayout.of(entity.bundle()).pieces().stream()
+                .filter(p -> p.type() == PipeType.FLUID && p.kind() == ConduitLayout.Kind.CORE).findFirst().map(ConduitLayout.Piece::box).orElse(null);
+        if (core != null) {
+            Vec3 c = new Vec3(pos.getX() + (core.minX() + core.maxX()) / 32.0, pos.getY() + (core.minY() + core.maxY()) / 32.0,
+                    pos.getZ() + (core.minZ() + core.maxZ()) / 32.0);
+            PipeLookInfo.Look other = PipeLookAdapter.look(level, pos, entity, c);
+            check("look: a core is told apart from the other pipe", other != null && other.type() == PipeType.FLUID
+                    && other.tier() == Tier.IRON && other.face() == null);
+        }
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos.south(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
     }
 
     // --- Plumbing ----------------------------------------------------------------------------
