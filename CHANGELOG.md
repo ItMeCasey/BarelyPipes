@@ -17,5 +17,5 @@ First version. Barely Pipes is the pipe bundles of AeroFlux as a mod of its own.
 - ME pipes join Applied Energistics 2 grids; gas pipes join Mekanism where Mekanism exists for the build (NeoForge 1.21.1, Forge and NeoForge 1.20.1).
 - Recipes with vanilla ingredients for every pipe, tool and upgrade (ME pipe recipes load only with AE2).
 - Config file `config/barelypipes-common.toml` with `debugLogging` and `protectionEnabled`.
-- Forge and NeoForge on Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3. One jar per Minecraft version works on both loaders for 1.21.1, 26.1.2, 26.2 and 26.3; 1.20.1 has a Forge jar and a NeoForge jar.
+- Forge and NeoForge on Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3. The release is ten jars, one per loader and Minecraft version, named `barelypipes-<loader>-mc<mc>-<version>.jar`.
 - Not in this version: item viewer plugins (BEI, REI, JEI, EMI), Show Me What This Is and Jade plugins, configurable tier rates.

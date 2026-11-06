@@ -31,7 +31,12 @@ minecraft {
             if (project.hasProperty('devTools')) { systemProperty 'barelypipes.dev', 'true' }
             systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
         }
-        register('client')
+        register('client') {
+            // -PwindowSize=1904x1041 opens the dev client at that size (the screenshot checks need the same layout every run).
+            if (project.hasProperty('windowSize')) {
+                args '--width', project.property('windowSize').split('x')[0], '--height', project.property('windowSize').split('x')[1]
+            }
+        }
         register('server') {
             args '--nogui'
         }

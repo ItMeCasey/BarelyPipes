@@ -10,15 +10,14 @@ Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3, on Forge and NeoForge (ten buil
 
 | Minecraft | Jar | Loader |
 |---|---|---|
-| 26.3, 26.2, 26.1.2, 1.21.1 | `barelypipes-mc<mc>-2026.11.1.jar` | one jar that works on both Forge and NeoForge |
-| 1.20.1 | `barelypipes-forge-mc1.20.1-2026.11.1.jar` | Forge |
-| 1.20.1 | `barelypipes-neoforge-mc1.20.1-2026.11.1.jar` | NeoForge |
+| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-forge-mc<mc>-2026.11.1.jar` | Forge |
+| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-neoforge-mc<mc>-2026.11.1.jar` | NeoForge |
 
-On 1.20.1 the two loaders use the same metadata file name, so they cannot share one jar.
+There is no combined jar: Forge and NeoForge builds of the same Minecraft version use the same class names with different code, so each release file is built for one loader and one Minecraft version.
 
 ## Install
 
-Put the jar for your Minecraft version (and loader, on 1.20.1) into `mods` on the server and on every client. No other mod is required.
+Put the jar for your Minecraft version and loader into `mods` on the server and on every client. No other mod is required.
 
 Optional mods unlock their pipes:
 
@@ -82,7 +81,7 @@ cd ..
 python scripts/server_check.py neoforge-26.1.2   # headless self test, prints SERVER PASS or SERVER FAIL
 ```
 
-`python scripts/server_check.py all` runs every layer. `python scripts/make_assets.py <mc> <forge|neoforge>` rewrites the textures, models, lang and recipes of a module. `python scripts/combine_jars.py out.jar a.jar b.jar` joins the Forge and NeoForge jars of one Minecraft version into the release jar. Development tools (the self test) build only with `-PdevTools`. [`docs/DESIGN.md`](docs/DESIGN.md) has the design notes and [`docs/PORTING.md`](docs/PORTING.md) how a module is ported.
+`python scripts/server_check.py all` runs every layer. `python scripts/make_assets.py <mc> <forge|neoforge>` rewrites the textures, models, lang and recipes of a module. Development tools (the self test) build only with `-PdevTools`. [`docs/DESIGN.md`](docs/DESIGN.md) has the design notes and [`docs/PORTING.md`](docs/PORTING.md) how a module is ported.
 
 Branding: `python branding/source/make_icon.py`, then `python branding/source/render_banners.py` (Pillow and Google Chrome).
 

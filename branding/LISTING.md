@@ -14,7 +14,7 @@ Everything needed to fill in the CurseForge project form. Files are in `branding
 | Class | Mods |
 | Main category | Technology, or the closest item, fluid and energy transport category the form offers |
 | Loaders | Forge and NeoForge |
-| Game versions | Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3, one jar per Minecraft version (two jars on 1.20.1, see below); set the loader and game version on each uploaded file |
+| Game versions | Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3, ten jars, one per loader and Minecraft version (see below); set the loader and game version on each uploaded file |
 | Environment | Client and Server (the upload script sends both) |
 | License | MIT |
 | Source | https://github.com/ItMeCasey/BarelyPipes |
@@ -25,8 +25,10 @@ Everything needed to fill in the CurseForge project form. Files are in `branding
 
 | Minecraft | Jars | Loaders |
 |---|---|---|
-| 26.3, 26.2, 26.1.2, 1.21.1 | `barelypipes-mc<mc>-<version>.jar`, one combined jar | Forge and NeoForge (upload once, tick both loaders) |
-| 1.20.1 | `barelypipes-forge-mc1.20.1-<version>.jar` and `barelypipes-neoforge-mc1.20.1-<version>.jar` | one jar per loader (the two loaders share one metadata file name on 1.20.1, so they cannot be combined) |
+| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-forge-mc<mc>-<version>.jar` | Forge (upload as its own file, tick only Forge) |
+| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-neoforge-mc<mc>-<version>.jar` | NeoForge (upload as its own file, tick only NeoForge) |
+
+Upload ten files per release, one per loader and Minecraft version, each with its own loader and game version ticked. There is no combined jar: Forge and NeoForge builds of the same Minecraft version use the same class names with different code, so they cannot be merged.
 
 ### One-line description
 

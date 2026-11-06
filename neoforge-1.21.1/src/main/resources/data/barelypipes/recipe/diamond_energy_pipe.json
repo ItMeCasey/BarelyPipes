@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "T": "minecraft:diamond",
-    "C": "minecraft:redstone"
+    "T": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "minecraft:redstone"
+    }
   },
   "pattern": [
     "TTT",

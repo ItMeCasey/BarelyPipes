@@ -80,7 +80,7 @@ public final class ShotTour {
     }
 
     private static void waitForMenu(Minecraft minecraft) {
-        if (minecraft.getOverlay() != null || minecraft.level != null || minecraft.screen == null || ++idle < 20) {
+        if (minecraft.gui.overlay() != null || minecraft.level != null || minecraft.gui.screen() == null || ++idle < 20) {
             return;
         }
         minecraft.options.pauseOnLostFocus = false;
@@ -98,11 +98,11 @@ public final class ShotTour {
         idle = 0;
         LOGGER.info("BARELYPIPES-SHOTS creating world");
         minecraft.createWorldOpenFlows().createFreshLevel(WORLD, settings, new WorldOptions(0L, false, false),
-                WorldPresets::createFlatWorldDimensions, new TitleScreen());
+                registries -> registries.lookupOrThrow(net.minecraft.core.registries.Registries.WORLD_PRESET).getOrThrow(WorldPresets.FLAT).value().createWorldDimensions(), new TitleScreen());
     }
 
     private static void waitForWorld(Minecraft minecraft) {
-        if (minecraft.level == null || minecraft.player == null || minecraft.screen != null
+        if (minecraft.level == null || minecraft.player == null || minecraft.gui.screen() != null
                 || minecraft.getSingleplayerServer() == null || ++idle < 40) {
             return;
         }
@@ -135,7 +135,6 @@ public final class ShotTour {
             LocalPlayer player = player();
             player.getAbilities().flying = false;
             Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
-            Minecraft.getInstance().options.hideGui = false;
             Minecraft.getInstance().options.guiScale().set(3);
         });
         // The whole family in the hotbar.
@@ -294,14 +293,14 @@ public final class ShotTour {
     static void shoot(String name, int delay) {
         then(delay, () -> {
             Minecraft minecraft = Minecraft.getInstance();
-            minecraft.gui.getChat().clearMessages(false);
-            minecraft.getToastManager().clear();
+            minecraft.gui.hud.getChat().clearMessages(false);
+            minecraft.gui.toastManager().clear();
         });
         then(2, () -> {
             Minecraft minecraft = Minecraft.getInstance();
             LocalPlayer self = minecraft.player;
             LOGGER.info("BARELYPIPES-SHOTS {} eye={} pitch={} yaw={}", name, self.getEyePosition(), self.getXRot(), self.getYRot());
-            Screenshot.grab(minecraft.gameDirectory, "barelypipes_" + name + ".png", minecraft.getMainRenderTarget(), 1,
+            Screenshot.grab(minecraft.gameDirectory, "barelypipes_" + name + ".png", minecraft.gameRenderer.mainRenderTarget(), 1,
                     message -> LOGGER.info("BARELYPIPES-SHOTS saved {}", name));
         });
     }

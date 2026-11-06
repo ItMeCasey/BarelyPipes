@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "T": "minecraft:gold_ingot",
-    "C": "minecraft:copper_ingot"
+    "T": {
+      "item": "minecraft:gold_ingot"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
   },
   "pattern": [
     "TTT",

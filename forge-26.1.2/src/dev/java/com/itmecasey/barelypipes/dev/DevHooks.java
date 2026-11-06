@@ -38,6 +38,9 @@ public final class DevHooks {
                 new Item.Properties().setId(ITEMS.key("test_tank")).useBlockDescriptionPrefix()));
         ITEMS.register(modBusGroup);
         ENTITIES.register(modBusGroup);
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && System.getenv("BARELYPIPES_SHOTS") != null) {
+            ClientHooks.install();
+        }
         if (SelfTest.requested()) {
             ServerStartedEvent.BUS.addListener((ServerStartedEvent event) -> SelfTest.start(event.getServer()));
             TickEvent.ServerTickEvent.Post.BUS.addListener(SelfTest::onServerTick);

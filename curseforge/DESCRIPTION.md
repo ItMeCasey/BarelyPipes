@@ -42,7 +42,7 @@ Docs and recipes: [itmecasey.com/wiki/barelypipes](https://itmecasey.com/wiki/ba
 - **Forge Energy and the standard fluid and item handlers:** work with any mod that speaks them.
 - Item viewers (BEI, REI, JEI, EMI) and the in-world info mods Show Me What This Is and Jade have no plugin yet. This is on the plan, not done.
 
-Install: put the jar for your Minecraft version in `mods` on the server and on every client. One jar per version holds both loaders on 26.3, 26.2, 26.1.2 and 1.21.1; on 1.20.1 take the Forge jar or the NeoForge jar to match your loader.
+Install: put the jar for your Minecraft version in `mods` on the server and on every client. Each file is built for one loader and one Minecraft version, so take the Forge jar or the NeoForge jar to match your loader.
 
 The pictures on this page are illustrations drawn for the listing, not game screenshots.
 
@@ -50,7 +50,7 @@ The pictures on this page are illustrations drawn for the listing, not game scre
 
 ![FAQ](https://raw.githubusercontent.com/ItMeCasey/BarelyPipes/main/branding/banners/h_faq.png)
 
-**Which jar do I use?** One jar per Minecraft version holds both loaders for 26.3, 26.2, 26.1.2 and 1.21.1 (`barelypipes-mc<version>-<release>.jar`). On 1.20.1 there is one jar for Forge and one for NeoForge.
+**Which jar do I use?** The one named for your loader and Minecraft version: `barelypipes-<loader>-mc<mc>-<release>.jar`, where the loader is `forge` or `neoforge`. There is one jar per loader for each of the five Minecraft versions.
 
 **Does it need to be on the server?** Yes, on the server and on every client.
 

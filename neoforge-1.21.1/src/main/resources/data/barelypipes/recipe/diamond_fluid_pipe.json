@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "T": "minecraft:diamond",
-    "C": "minecraft:glass"
+    "T": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "minecraft:glass"
+    }
   },
   "pattern": [
     "TTT",

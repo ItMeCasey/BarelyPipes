@@ -102,7 +102,7 @@ FLAT_ITEMS = ["pipe_wrench", "conduit_tool", "speed_upgrade", "capacity_upgrade"
 def recipes(fam):
     """Recipes as (name, builder(fam) -> json). Vanilla ingredients only, so no loader tag differences."""
     def ing(item):
-        if fam == "1.20.1":
+        if fam != "26":
             return {"item": item}
         return item
 
@@ -160,7 +160,7 @@ def conditional(data, loader, fam, modid):
 
 def ae_recipes(fam):
     def ing(item):
-        return {"item": item} if fam == "1.20.1" else item
+        return {"item": item} if fam != "26" else item
 
     def result(item, count=1):
         return {"item": f"{MODID}:{item}", "count": count} if fam == "1.20.1" else {"id": f"{MODID}:{item}", "count": count}

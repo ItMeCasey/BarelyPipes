@@ -8,12 +8,24 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "barelypipes:me_pipe",
-    "barelypipes:me_pipe",
-    "barelypipes:me_pipe",
-    "barelypipes:me_pipe",
-    "minecraft:glowstone_dust",
-    "minecraft:redstone"
+    {
+      "item": "barelypipes:me_pipe"
+    },
+    {
+      "item": "barelypipes:me_pipe"
+    },
+    {
+      "item": "barelypipes:me_pipe"
+    },
+    {
+      "item": "barelypipes:me_pipe"
+    },
+    {
+      "item": "minecraft:glowstone_dust"
+    },
+    {
+      "item": "minecraft:redstone"
+    }
   ],
   "result": {
     "id": "barelypipes:dense_me_pipe",

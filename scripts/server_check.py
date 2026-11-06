@@ -25,7 +25,7 @@ PORTS = {
 TIMEOUT = 420
 # Real load problems: the loader could not load a mod, or an error names this mod. Netty and log4j probe lines about native
 # transports on the wrong OS ("Only supported on Linux") are normal noise on Windows and are ignored.
-ERROR_WORDS = re.compile(r"(ModLoadingException|Failed to load mod|Encountered an unexpected exception|FATAL)")
+ERROR_WORDS = re.compile(r"(ModLoadingException|Failed to load mod|Encountered an unexpected exception|FATAL|Parsing error loading recipe)")
 OWN_ERROR = re.compile(r"barelypipes.*(Exception|Error)|(Exception|Error).*com\.itmecasey\.barelypipes", re.IGNORECASE)
 
 

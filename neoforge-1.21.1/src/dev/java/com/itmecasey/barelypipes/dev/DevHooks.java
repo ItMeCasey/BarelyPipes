@@ -36,6 +36,9 @@ public final class DevHooks {
         ITEMS.register(modBus);
         ENTITIES.register(modBus);
         modBus.addListener(DevHooks::capabilities);
+        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT && System.getenv("BARELYPIPES_SHOTS") != null) {
+            ClientHooks.install();
+        }
         if (SelfTest.requested()) {
             NeoForge.EVENT_BUS.addListener((ServerStartedEvent event) -> SelfTest.start(event.getServer()));
             NeoForge.EVENT_BUS.addListener(SelfTest::onServerTick);

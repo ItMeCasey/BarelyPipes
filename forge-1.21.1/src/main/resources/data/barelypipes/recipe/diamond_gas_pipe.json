@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "T": "minecraft:diamond",
-    "C": "minecraft:amethyst_shard"
+    "T": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "minecraft:amethyst_shard"
+    }
   },
   "pattern": [
     "TTT",
