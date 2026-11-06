@@ -3,6 +3,8 @@ package com.itmecasey.barelypipes.dev;
 import com.itmecasey.barelypipes.conduit.ConduitBundleBlockEntity;
 import com.itmecasey.barelypipes.conduit.config.PipeConfigMenu;
 import com.itmecasey.barelypipes.core.Tier;
+import com.itmecasey.barelypipes.core.conduit.Box;
+import com.itmecasey.barelypipes.core.conduit.ConduitLayout;
 import com.itmecasey.barelypipes.core.conduit.ConnectionMode;
 import com.itmecasey.barelypipes.core.conduit.Face;
 import com.itmecasey.barelypipes.core.conduit.PipeType;
@@ -209,6 +211,14 @@ public final class ShotTour {
         then(2, () -> moveTo(new Vec3(cx - 0.4, ground + 1.2, -0.9), new Vec3(cx - 0.4, ground + 0.5, 0.5)));
         shoot("attached_chest_side", 6);
 
+        // The look-at overlay (Show Me What This Is, when installed): the item pipe's arm, its plug and the fluid pipe's core.
+        then(4, () -> aimAt(new BlockPos(cx, ground, 0), "arm"));
+        shoot("look_item_arm", 30);
+        then(2, () -> aimAt(new BlockPos(cx, ground, 0), "plug"));
+        shoot("look_item_plug", 30);
+        then(2, () -> aimAt(new BlockPos(cx, ground, 0), "core"));
+        shoot("look_core", 30);
+
         // The pipe screen on the item pipe's chest side.
         then(4, () -> onServer(srv -> {
             ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) srv.overworld().getBlockEntity(new BlockPos(cx, ground, 0));
@@ -275,6 +285,26 @@ public final class ShotTour {
         MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
         server.overworld().setBlock(pos, ModBlocks.CONDUIT_BUNDLE.get().defaultBlockState(), Block.UPDATE_ALL);
         return (ConduitBundleBlockEntity) server.overworld().getBlockEntity(pos);
+    }
+
+    /** Puts the camera a block north of a part of the bundle at {@code pos}, looking at it: the item pipe's west arm or plug, or a core or the junction box. */
+    private static void aimAt(BlockPos pos, String what) {
+        ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(pos);
+        ConduitLayout layout = ConduitLayout.of(entity.bundle());
+        Box box;
+        switch (what) {
+            case "arm" -> {
+                Box arm = layout.armOf(PipeType.ITEM, Face.WEST);
+                box = new Box(arm.maxX() - 1.0, arm.minY(), arm.minZ(), arm.maxX(), arm.maxY(), arm.maxZ());
+            }
+            case "plug" -> box = layout.pieces().stream().filter(p -> p.kind() == ConduitLayout.Kind.PLUG && p.type() == PipeType.ITEM)
+                    .findFirst().orElseThrow().box();
+            default -> box = layout.pieces().stream().filter(p -> p.kind() == ConduitLayout.Kind.CORE || p.kind() == ConduitLayout.Kind.JUNCTION)
+                    .findFirst().orElseThrow().box();
+        }
+        Vec3 target = new Vec3(pos.getX() + (box.minX() + box.maxX()) / 32.0, pos.getY() + (box.minY() + box.maxY()) / 32.0,
+                pos.getZ() + (box.minZ() + box.maxZ()) / 32.0);
+        moveTo(target.add(0.0, 0.0, -1.2), target);
     }
 
     static void moveTo(Vec3 eye, Vec3 target) {
