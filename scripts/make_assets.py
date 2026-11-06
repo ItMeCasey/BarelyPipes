@@ -246,6 +246,10 @@ def main(mc, loader):
             continue
         shutil.copyfile(os.path.join(afres, "textures", "gui", "glyph", g), os.path.join(gdir, g))
     shutil.copyfile(os.path.join(TEMPLATE, "glyphs", "storage.png"), os.path.join(gdir, "storage.png"))
+    # The plug arrow faces, the dark gas glyph face and the 13 by 13 storage glyph are drawn over the template's files.
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import gen_plug_arrows
+    gen_plug_arrows.main()
     idir = os.path.join(assets, "textures", "item")
     os.makedirs(idir, exist_ok=True)
     for name, srcname in [("pipe_wrench", "flux_wrench"), ("conduit_tool", "conduit_tool"), ("speed_upgrade", "speed_upgrade"),

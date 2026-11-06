@@ -31,7 +31,29 @@ public final class PipeTextures {
     /** The plug's glyph face, which shows what the pipe carries and has no tier. */
     public static final String PLUG_FACE = "plug";
 
+    /**
+     * The plug's glyph faces that carry arrows: the glyph with arrows in its side margins that point
+     * toward it (import, into the pipe), away from it (export, out of the pipe) or both (open).
+     */
+    public static final List<String> PLUG_ARROW_FACES = List.of("plug_import", "plug_export", "plug_open");
+
     private PipeTextures() {
+    }
+
+    /**
+     * The glyph face a plug takes for the pipe's mode at that face: arrows for import, export and
+     * open, the plain glyph for off (and for anything else, which has no plug).
+     */
+    public static String plugFace(ConnectionMode mode) {
+        if (mode == null) {
+            return PLUG_FACE;
+        }
+        return switch (mode) {
+            case IMPORT -> PLUG_ARROW_FACES.get(0);
+            case EXPORT -> PLUG_ARROW_FACES.get(1);
+            case OPEN -> PLUG_ARROW_FACES.get(2);
+            default -> PLUG_FACE;
+        };
     }
 
     /** Whether a pipe type comes in tiers; redstone, ME, dense ME and storage pipes have a single set. */
@@ -54,6 +76,9 @@ public final class PipeTextures {
                     names.add(name(type, tier, part));
                 }
                 names.add(name(type, tier, PLUG_FACE));
+                for (String arrows : PLUG_ARROW_FACES) {
+                    names.add(name(type, tier, arrows));
+                }
             }
         }
         return names;

@@ -58,8 +58,10 @@ public final class BundleState {
      * @param connected the connected masks of all lanes packed into one value
      * @param external  the external masks of all lanes packed into one value
      * @param tiers     the tier of each pipe present, packed; each tier has its own textures
+     * @param plugLow   the plug arrow kind (2 bits) of every lane and face, lanes 0 to 3
+     * @param plugHigh  the same for lanes 4 up, so a mode change at a plug re-bakes the model
      */
-    public record ModelKey(int setKey, long connected, long external, int tiers) {
+    public record ModelKey(int setKey, long connected, long external, int tiers, long plugLow, long plugHigh) {
     }
 
     public PipeSet set() {
@@ -277,7 +279,28 @@ public final class BundleState {
 
     /** The key under which the model caches this bundle's quads. */
     public ModelKey modelKey() {
-        return new ModelKey(set.key(), pack(connected), pack(external), packTiers());
+        long low = 0;
+        long high = 0;
+        for (int lane = 0; lane < PipeType.LANES; lane++) {
+            for (Face face : Face.values()) {
+                if ((connected[lane] & external[lane] & (1 << face.index())) == 0) {
+                    continue;
+                }
+                long kind = switch (mode(lane, face)) {
+                    case IMPORT -> 1;
+                    case EXPORT -> 2;
+                    case OPEN -> 3;
+                    default -> 0;
+                };
+                int shift = ((lane % 4) * FACES + face.index()) * 2;
+                if (lane < 4) {
+                    low |= kind << shift;
+                } else {
+                    high |= kind << shift;
+                }
+            }
+        }
+        return new ModelKey(set.key(), pack(connected), pack(external), packTiers(), low, high);
     }
 
     /** The tiers of the lanes that hold a pipe; an empty lane's leftover tier draws nothing, so it counts as 0. */
