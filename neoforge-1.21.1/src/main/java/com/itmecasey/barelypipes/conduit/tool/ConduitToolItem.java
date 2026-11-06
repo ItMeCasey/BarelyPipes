@@ -1,6 +1,7 @@
 package com.itmecasey.barelypipes.conduit.tool;
 
 import com.itmecasey.barelypipes.conduit.ConduitBundleBlockEntity;
+import com.itmecasey.barelypipes.conduit.config.PipeConfigActions;
 import com.itmecasey.barelypipes.core.conduit.ConduitLayout;
 import com.itmecasey.barelypipes.core.conduit.Face;
 import com.itmecasey.barelypipes.core.conduit.PipeType;
@@ -96,7 +97,8 @@ public class ConduitToolItem extends Item {
         }
         ToolGuard runGuard = new ToolGuard(player, mode == ToolMode.REMOVE_RUN ? ProtectionAction.BREAK_BLOCK : ProtectionAction.USE_BLOCK);
         ConduitToolActions.Result result = switch (mode) {
-            case EDIT -> ConduitToolActions.edit(entity, pipe, Face.byIndex(context.getClickedFace().get3DDataValue()));
+            case EDIT -> ConduitToolActions.edit(entity, pipe, PipeConfigActions.faceOf(entity.bundle(), local.x, local.y, local.z,
+                    Face.byIndex(context.getClickedFace().get3DDataValue())));
             case REMOVE -> ConduitToolActions.remove(level, pos, entity, pipe, sneaking);
             case REMOVE_RUN -> ConduitToolActions.removeRun(serverLevel, tool, pos, pipe, runGuard);
             // Tiers are raised by using a higher-tier pipe on the bundle now; the tool skips this mode.

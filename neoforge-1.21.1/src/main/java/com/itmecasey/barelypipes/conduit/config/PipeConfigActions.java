@@ -7,7 +7,6 @@ import com.itmecasey.barelypipes.conduit.PipeItem;
 import com.itmecasey.barelypipes.conduit.UpgradeItem;
 import com.itmecasey.barelypipes.conduit.tool.ConduitToolItem;
 import com.itmecasey.barelypipes.core.Tier;
-import com.itmecasey.barelypipes.core.conduit.Box;
 import com.itmecasey.barelypipes.core.conduit.BundleState;
 import com.itmecasey.barelypipes.core.conduit.ConduitLayout;
 import com.itmecasey.barelypipes.core.conduit.ConnectionMode;
@@ -39,12 +38,6 @@ import net.neoforged.neoforge.fluids.FluidUtil;
  * that only look take the {@link BundleState}.
  */
 public final class PipeConfigActions {
-    /**
-     * How close, in block pixels, a click must be to an arm or connector to count as a click on
-     * it. Rays end exactly on the surface of the hit shape, so this only absorbs rounding.
-     */
-    private static final double CLICK_REACH = 0.1;
-
     /** Channels of the two ME pipes. AE2 hands them out itself; this is only what the screen reports. */
     private static final int ME_CHANNELS = 8;
     private static final int DENSE_ME_CHANNELS = 32;
@@ -64,10 +57,10 @@ public final class PipeConfigActions {
     }
 
     /**
-     * Works out what a click on a bundle meant. The pipe is the one nearest the click, exactly as
-     * the wrench and the Conduit Tool choose it. The click only counts if it landed on that pipe's
-     * arm or on the machine connector at the end of it, and then the face is the one the arm
-     * points to. Clicks on a pipe core or on empty parts of the bundle are not aimed at a connector.
+     * Works out what a click on a bundle meant. The click is matched against the drawn pieces: a
+     * click on a pipe's plug, on its arm, or on the plate beside its plug counts, and the face is
+     * the one the arm or plug points to. Clicks on a pipe core, the junction or empty parts of the
+     * bundle are not aimed at a connector.
      *
      * @param x x of the click in block pixels
      * @param y y of the click in block pixels
@@ -75,31 +68,21 @@ public final class PipeConfigActions {
      * @return the lane and face, or {@code null} if the click was not on a connector
      */
     public static Target resolveTarget(BundleState bundle, double x, double y, double z) {
-        ConduitLayout layout = ConduitLayout.of(bundle);
-        PipeType pipe = layout.nearestPipe(x, y, z);
-        if (pipe == null) {
+        ConduitLayout.Pick pick = ConduitLayout.of(bundle).pick(x, y, z);
+        if (pick == null || pick.face() == null
+                || (pick.kind() != ConduitLayout.Kind.PLUG && pick.kind() != ConduitLayout.Kind.ARM)) {
             return null;
         }
-        int lane = pipe.lane();
+        return new Target(pick.pipe(), pick.face());
+    }
 
-        Face best = null;
-        double bestDistance = Double.MAX_VALUE;
-        for (Face face : Face.values()) {
-            Box arm = layout.armOf(pipe, face);
-            if (arm == null) {
-                continue;
-            }
-            double distance = arm.distanceTo(x, y, z);
-            Box plate = bundle.isExternal(lane, face) ? layout.plateOf(face) : null;
-            if (plate != null) {
-                distance = Math.min(distance, plate.distanceTo(x, y, z));
-            }
-            if (distance <= CLICK_REACH && distance < bestDistance) {
-                best = face;
-                bestDistance = distance;
-            }
-        }
-        return best == null ? null : new Target(pipe, best);
+    /**
+     * The face a tool click acts on: the face the clicked arm or plug points to, or the clicked
+     * block face when the click was on a core or a junction.
+     */
+    public static Face faceOf(BundleState bundle, double x, double y, double z, Face clicked) {
+        ConduitLayout.Pick pick = ConduitLayout.of(bundle).pick(x, y, z);
+        return pick != null && pick.face() != null ? pick.face() : clicked;
     }
 
     /**
