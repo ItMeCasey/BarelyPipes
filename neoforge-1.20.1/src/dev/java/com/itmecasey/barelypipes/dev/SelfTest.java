@@ -1,6 +1,7 @@
 package com.itmecasey.barelypipes.dev;
 
 import com.itmecasey.barelypipes.BarelyPipes;
+import com.itmecasey.barelypipes.compat.mekanism.MekanismCompat;
 import com.itmecasey.barelypipes.conduit.ConduitBundleBlockEntity;
 import com.itmecasey.barelypipes.core.conduit.ConduitLayout;
 import com.itmecasey.barelypipes.core.conduit.ConnectionMode;
@@ -56,6 +57,9 @@ public final class SelfTest {
         TransferSelfTest.setUp(level);
         ToolSelfTest.setUp(level);
         ScreenSelfTest.setUp(level);
+        if (MekanismCompat.loaded()) {
+            GasSelfTest.setUp(level);
+        }
         running = true;
     }
 
@@ -64,6 +68,9 @@ public final class SelfTest {
             return;
         }
         TransferSelfTest.tick();
+        if (MekanismCompat.loaded()) {
+            GasSelfTest.tick();
+        }
         // The tool checks place and remove many bundles, which must not disturb the timed transfer checks.
         if (TransferSelfTest.finished()) {
             ToolSelfTest.tick();
@@ -71,7 +78,8 @@ public final class SelfTest {
         if (ToolSelfTest.finished()) {
             ScreenSelfTest.tick();
         }
-        if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished()) {
+        if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished()
+                && (!MekanismCompat.loaded() || GasSelfTest.finished())) {
             finish();
         }
     }
