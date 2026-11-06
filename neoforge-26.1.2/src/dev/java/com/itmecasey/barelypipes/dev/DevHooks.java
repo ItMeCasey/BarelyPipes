@@ -35,8 +35,12 @@ public final class DevHooks {
         ITEMS.register(modBus);
         ENTITIES.register(modBus);
         modBus.addListener(DevHooks::capabilities);
-        if (net.neoforged.fml.loading.FMLEnvironment.getDist() == net.neoforged.api.distmarker.Dist.CLIENT && System.getenv("BARELYPIPES_SHOTS") != null) {
+        if (net.neoforged.fml.loading.FMLEnvironment.getDist() == net.neoforged.api.distmarker.Dist.CLIENT && (System.getenv("BARELYPIPES_SHOTS") != null || Playground.requested())) {
             ClientHooks.install();
+        }
+        if (Playground.requested()) {
+            NeoForge.EVENT_BUS.addListener(Playground::onServerStarted);
+            NeoForge.EVENT_BUS.addListener(Playground::onLogin);
         }
         if (SelfTest.requested()) {
             NeoForge.EVENT_BUS.addListener((ServerStartedEvent event) -> SelfTest.start(event.getServer()));
