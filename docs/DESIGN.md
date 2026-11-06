@@ -38,7 +38,11 @@ for. `StorageMover` does the moving; `StorageLink` is the only class that names 
 BarelyStorage is installed.
 
 BarelyStorage only has 26.1.2, 26.2 and 26.3 builds, so on 1.20.1 and 1.21.1 the storage pipe item exists but has no recipe
-and joins inventories only (the same way AeroFlux's gas pipe waits for Mekanism).
+and joins inventories only (the same way the gas pipe is inert without Mekanism).
+
+## Gas pipe and Mekanism
+
+The gas pipe carries Mekanism chemicals through a soft dependency. `MekanismCompat` checks `ModList` and is the only class the rest of the mod calls; `MekanismChemicals` (1.21.1, one chemical handler capability) or `MekanismGas` (1.20.1, Mekanism 10.4's gas handler) and `ChemicalMover` are the classes that name Mekanism, reached only after `loaded()` is true. `Connections.attaches` asks `MekanismCompat.offersChemicals` or `offersGas`; `GasMover` runs `ChemicalMover`, which picks one chemical per step and shares it out with `AmountMover` at the PipeTiers gas rate, with Priority upgrades. The Filter Upgrade is not offered on gas pipes, so AeroFlux's chemical-from-held-item filter code was not carried over. Mekanism exists only for 1.20.1 (Forge and NeoForge) and 1.21.1 (NeoForge): on the other seven builds there is no Mekanism code and the gas pipe is inert. In the build, Mekanism is compile-only; `-PdevTools` adds it to the dev run and `-PnoMekanism` takes it out again.
 
 ## Items
 

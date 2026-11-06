@@ -40,6 +40,13 @@ what that was, diff a reference file against its AeroFlux original after renamin
    on 1.20.1 and 1.21.1 keep the STORAGE case in `Connections` (item handlers only), leave `StorageLink` out and no recipe (the asset
    script already skips the recipe for those versions); BarelyStorage's jar for compile is `libs/barelystorage-mc<mc>.jar`
    (copy from `C:\Users\casey\Desktop\BarelyStorage\dist\barelystorage-mc<mc>-2026.11.1.jar`; 26.1.2 is already there).
+4a. Gas pipe: Mekanism only has builds for 1.20.1 (Forge and NeoForge) and 1.21.1 (NeoForge). Those three modules carry
+   `compat/mekanism/MekanismCompat` (ModList check, the only class other code calls), `MekanismGas` (1.20.1) or
+   `MekanismChemicals` (1.21.1), `conduit/transfer/ChemicalMover`, a `GasMover` that calls it when Mekanism is loaded, a
+   `case GAS` in `Connections.attaches`, `mekanism_version` in `gradle.properties` (Modrinth Maven ids: uxe1WQp4 for 1.20.1,
+   5KzzycBT for 1.21.1) and a compile-only dependency in `build.gradle` that joins the dev run only with `-PdevTools`
+   (`-PnoMekanism` leaves it out). The other seven modules keep the empty `GasMover` and `case GAS -> false`. The dev folder
+   has `GasSelfTest` and `GasShots` (client tour scene), used only when `MekanismCompat.loaded()`.
 5. Dev tools live in `src/dev/java/com/itmecasey/barelypipes/dev` and only build with `-PdevTools`; the main class finds
    `dev.DevHooks` by reflection when the system property `barelypipes.dev` is set (the `run` blocks of `build.gradle` set it).
    `DevHooks` registers a `test_tank` block (fluid and energy on every side) and runs `SelfTest`, which sets up

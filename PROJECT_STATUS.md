@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-06
-Summary: Barely Pipes (AeroFlux's pipe bundles as their own mod, seven pipes with a new BarelyStorage pipe, three tiers) builds and passes its unit tests and headless server self test on all ten Forge and NeoForge builds, a scripted real-client tour (frames read) on all ten, and ten packaged jars; the Gas Pipe does not work yet because Mekanism support was not carried over.
+Summary: Barely Pipes (AeroFlux's pipe bundles as their own mod, seven pipes with a new BarelyStorage pipe, three tiers) builds and passes its unit tests and headless server self test on all ten Forge and NeoForge builds, a scripted real-client tour (frames read) on all ten, and ten packaged jars; the Gas Pipe carries Mekanism gases on the three builds that have Mekanism (Forge and NeoForge 1.20.1, NeoForge 1.21.1) and is inert on the other seven.
 Spend: none
 
 ## Foundation
@@ -20,7 +20,8 @@ Spend: none
 - [x] Headless self test on the other nine builds (219 checks on 26.x, 213 on 1.20.1 and 1.21.1, 0 failures) (w:4)
 - [x] Client checks with frames on all ten builds (scripted tour, frames in docs/frames, a few Forge 26.1.2 and 26.2 frames unread) (w:4)
 - [ ] ME pipes against real AE2 grids (not tried; no AE2 Forge build for 26.x or Forge 1.21.1) (w:3)
-- [ ] Gas pipe: Mekanism support from AeroFlux (1.21.1 NeoForge, 1.20.1 both) was not carried over, so the Gas Pipe connects to nothing (w:3)
+- [x] Gas pipe with Mekanism on Forge 1.20.1, NeoForge 1.20.1 and NeoForge 1.21.1 (soft dependency; self test moves 40,000 mB between two Mekanism tanks at 800 mB per tick, passes with and without Mekanism; client tour frames read; the other seven builds have no Mekanism and keep the pipe inert) (w:3)
+- [ ] Gas pipe against more Mekanism machines and with tank contents visible in a client frame (the tour's tank models showed no contents; only chemical tanks were tried) (w:1)
 
 ## Release and docs
 - [x] Ten packaged jars in dist/ (scripts/build_all.sh run, no dev classes inside; Forge and NeoForge builds share class names so they are never combined) (w:2)
