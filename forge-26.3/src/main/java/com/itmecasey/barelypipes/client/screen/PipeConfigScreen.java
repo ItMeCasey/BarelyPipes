@@ -258,7 +258,7 @@ public class PipeConfigScreen extends AbstractContainerScreen<PipeConfigMenu> {
         int boxX = leftPos + box.x();
         int boxY = topPos + box.y();
         Panel.sunken(graphics, boxX, boxY, box.width(), box.height(), Panel.SLOT_FILL);
-        Glyphs.draw(graphics, Glyphs.pipeGlyph(menu.pipe()), boxX + box.width() / 2, boxY + box.height() / 2, accent);
+        Glyphs.drawIn(graphics, Glyphs.pipeGlyph(menu.pipe()), boxX, boxY, box.width(), box.height(), accent);
 
         if (PipeTiers.isTiered(menu.pipe())) {
             PipeConfigLayout.Rect gem = layout.tierGem();

@@ -3,6 +3,7 @@ package com.itmecasey.barelypipes.conduit.config;
 import com.itmecasey.barelypipes.core.Tier;
 import com.itmecasey.barelypipes.core.conduit.DistributionMode;
 import com.itmecasey.barelypipes.core.conduit.EndpointFilter;
+import com.itmecasey.barelypipes.core.conduit.GlyphCentering;
 import com.itmecasey.barelypipes.core.conduit.EndpointSettings;
 import com.itmecasey.barelypipes.core.conduit.PipeType;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public final class PipeConfigLayout {
     /** The size of a slot frame; the item sits one pixel inside it. */
     public static final int SLOT = 18;
     /** The side of the square mode buttons and of the pipe's glyph box. */
-    public static final int BUTTON = 22;
+    public static final int BUTTON = GlyphCentering.BUTTON;
     /** The side of one cell of the small cube net in the header. */
     public static final int NET_CELL = 6;
     /** How many cells the tier bar has, one per tier from copper to fluxium. */
@@ -75,7 +76,7 @@ public final class PipeConfigLayout {
     /** Width of the side panel: a 3 by 3 grid of slots with a six pixel margin each side. */
     public static final int SIDE_WIDTH = 2 * 6 + 3 * SLOT;
     /** The side of the priority's minus and plus buttons. */
-    public static final int SMALL_BUTTON = 16;
+    public static final int SMALL_BUTTON = GlyphCentering.SMALL_BUTTON;
     private static final int SIDE_MARGIN = 6;
     private static final int FILTER_GRID_Y = 36;
     /** Height of the filter part of the side panel: toggle row, grid, margin. */
@@ -179,7 +180,7 @@ public final class PipeConfigLayout {
 
     /** The whole throughput row left of the tier bar, for its tooltip. */
     public Rect rateArea() {
-        return new Rect(MARGIN, rateY, TIER_BAR_X - 4 - MARGIN, 14);
+        return new Rect(MARGIN, rateY, TIER_BAR_X - 4 - MARGIN, GlyphCentering.PICTURE);
     }
 
     /** One sunken cell of the tier bar; cells up to the pipe's tier are filled. */
