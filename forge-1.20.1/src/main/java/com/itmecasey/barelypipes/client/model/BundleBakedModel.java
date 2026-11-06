@@ -141,7 +141,8 @@ public class BundleBakedModel implements IDynamicBakedModel {
 
     /**
      * Adds a pipe's plug on a machine plate. The end that faces into the bundle shows the glyph of
-     * what the pipe carries; the end against the plate is never seen and takes the connector
+     * what the pipe carries, with arrows beside it when the pipe imports, exports or is open at
+     * that face; the end against the plate is never seen and takes the connector
      * texture.
      */
     private void addPlug(List<BakedQuad> quads, ConduitLayout.Piece piece, Tier tier) {
@@ -156,7 +157,7 @@ public class BundleBakedModel implements IDynamicBakedModel {
             if (face == piece.face()) {
                 sprite = node;
             } else if (face == piece.face().opposite()) {
-                sprite = pipe(type, tier, PipeTextures.PLUG_FACE);
+                sprite = pipe(type, tier, PipeTextures.plugFace(piece.mode()));
             } else {
                 sprite = pipe(type, tier, PipeTextures.vertical(piece.axis(), face) ? "plug_v" : "plug_h");
             }
