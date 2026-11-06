@@ -200,6 +200,22 @@ def lang():
         out[f"item.{MODID}.{pid}"] = (tier.capitalize() + " " + label) if tier else label
     out[f"tooltip.{MODID}.storage_pipe"] = "Joins BarelyStorage networks. One fixed speed, no tiers."
     out[f"tooltip.{MODID}.storage_pipe.missing"] = "BarelyStorage is not available for this Minecraft version, so this pipe only joins inventories."
+    # Side names (the wrench message, the tool and the look-at overlays use them).
+    for face in ("down", "up", "north", "south", "west", "east"):
+        out.setdefault(f"face.{MODID}.{face}", face.capitalize())
+    # Look-at overlays (Show Me What This Is): the pipe under the crosshair, built by core/conduit/PipeLookInfo.
+    for key, text in [
+        ("arm", "Arm: %s side"), ("plug", "Plug: %s side"), ("core", "Core of the pipe"),
+        ("junction", "Junction of the bundle"), ("mode", "Mode: %s"), ("connected_to", "Connected to: %s"),
+        ("another_bundle", "another bundle"), ("a_machine", "a machine"), ("not_connected", "Not connected"),
+        ("sides", "Sides: %s"), ("side_mode", "%s (%s)"), ("no_sides", "No side is connected"),
+        ("throughput", "Throughput: %s"), ("distribution", "Distribution: %s"),
+        ("filter_whitelist", "Filter: whitelist, %s listed"), ("filter_blacklist", "Filter: blacklist, %s listed"),
+        ("filter_whitelist_empty", "Filter: whitelist, empty (stops everything)"),
+        ("filter_blacklist_empty", "Filter: blacklist, empty (lets everything through)"),
+        ("priority", "Priority: %s"), ("others", "Also in this bundle: %s"),
+    ]:
+        out[f"smwti.{MODID}.{key}"] = text
     for k in list(out):
         if "wrench" in k:
             out[k] = out[k].replace("Flux Wrench", "Pipe Wrench")

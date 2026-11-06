@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.11.2
+
+- Show Me What This Is (NeoForge 26.3 so far): the overlay now names the exact pipe you look at, such as Gold Item Pipe, Diamond Energy Pipe or Storage Pipe, with that pipe's item as the icon, instead of "Pipe Bundle". Detail lines give the side and whether you are on an arm, the core or a plug, the mode, what the side connects to, the throughput, Speed and Capacity upgrades, Filter and Priority; the core also lists the other pipes of the bundle.
+- Fixed: the side names (Down, Up, North, South, West, East) were missing from the language file, so the Pipe Wrench and Conduit Tool messages showed raw keys.
+
 ## 2026.11.1
 
 First version. Barely Pipes is the pipe bundles of AeroFlux as a mod of its own.
