@@ -6,12 +6,12 @@ Docs and recipes: https://itmecasey.com/wiki/barelypipes/ (once published). List
 
 ## Versions and jars
 
-Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3, on Forge and NeoForge (ten builds). Release version `2026.11.1`.
+Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3, on Forge and NeoForge (ten builds). Release version `2026.11.2`.
 
 | Minecraft | Jar | Loader |
 |---|---|---|
-| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-forge-mc<mc>-2026.11.1.jar` | Forge |
-| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-neoforge-mc<mc>-2026.11.1.jar` | NeoForge |
+| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-forge-mc<mc>-2026.11.2.jar` | Forge |
+| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-neoforge-mc<mc>-2026.11.2.jar` | NeoForge |
 
 There is no combined jar: Forge and NeoForge builds of the same Minecraft version use the same class names with different code, so each release file is built for one loader and one Minecraft version.
 

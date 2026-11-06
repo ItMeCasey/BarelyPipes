@@ -23,6 +23,12 @@ Spend: none
 - [x] Gas pipe with Mekanism on Forge 1.20.1, NeoForge 1.20.1 and NeoForge 1.21.1 (soft dependency; self test moves 40,000 mB between two Mekanism tanks at 800 mB per tick, passes with and without Mekanism; client tour frames read; the other seven builds have no Mekanism and keep the pipe inert) (w:3)
 - [ ] Gas pipe against more Mekanism machines and with tank contents visible in a client frame (the tour's tank models showed no contents; only chemical tanks were tried) (w:1)
 
+## 2026.11.2 fixes (from Casey's play test)
+- [x] Outline, collision and clicks follow the drawn pipe boxes (common ConduitLayout.pick, 125 unit tests, all ten builds) (w:3)
+- [x] Plug arrows for import, export and open; gas plug glyph readable; storage glyph centered; pipe screen glyphs centered (all ten builds; arrows only seen small in tour frames) (w:3)
+- [x] Show Me What This Is names the exact pipe, tier and details (all ten builds; seen on NeoForge 26.1.2 and 26.3 and 1.21.1 clients only) (w:3)
+- [~] See-through top face under BarelyStorage racks, terminals and assembler: cause found (missing noOcclusion in BarelyStorage), patch handed to the BarelyStorage session, not confirmed in a client (w:2)
+
 ## Release and docs
 - [x] Ten packaged jars in dist/ (scripts/build_all.sh run, no dev classes inside; Forge and NeoForge builds share class names so they are never combined) (w:2)
 - [~] CI (build.yml) and release workflow (build.yml ran on GitHub: fixes pushed for gradlew line endings and a script syntax error; neoforge-26.2/26.3 failed on stale dev code, fixed locally; release workflow never run) (w:3)
