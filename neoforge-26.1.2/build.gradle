@@ -87,6 +87,8 @@ dependencies {
 // Development tools (generator self test, test energy sink, screenshot tour) live in src/dev folders and only build with
 // -PdevTools, so a normal build and the release jars never contain them.
 if (project.hasProperty('devTools')) {
+    // BarelyStorage as a real mod in the dev run, for the storage pipe checks.
+    dependencies { runtimeOnly files('../libs/barelystorage-mc26.1.2.jar') }
     sourceSets.main.java.srcDir 'src/dev/java'
     sourceSets.main.resources.srcDir 'src/dev/resources'
 }

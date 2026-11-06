@@ -58,6 +58,9 @@ public final class SelfTest {
         TransferSelfTest.setUp(level);
         ToolSelfTest.setUp(level);
         ScreenSelfTest.setUp(level);
+        if (com.itmecasey.barelypipes.conduit.transfer.StorageLink.loaded()) {
+            StorageSelfTest.setUp(level);
+        }
         running = true;
     }
 
@@ -73,7 +76,10 @@ public final class SelfTest {
         if (ToolSelfTest.finished()) {
             ScreenSelfTest.tick();
         }
-        if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished()) {
+        if (com.itmecasey.barelypipes.conduit.transfer.StorageLink.loaded()) {
+            StorageSelfTest.tick();
+        }
+        if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished() && StorageSelfTest.finished()) {
             finish();
         }
     }
