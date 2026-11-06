@@ -22,7 +22,7 @@ Docs and recipes: [itmecasey.com/wiki/barelypipes](https://itmecasey.com/wiki/ba
 - **Item Pipe:** 4, 8 or 16 items per operation, every 16, 12 or 8 ticks.
 - **Fluid Pipe:** 250, 650 or 1,800 mB per tick, any fluid.
 - **Energy Pipe:** 4,000, 16,000 or 64,000 FE per tick between any blocks that take Forge Energy.
-- **Gas Pipe:** 800, 2,400 or 7,000 mB per tick of Mekanism gas. Needs Mekanism, which exists for only some of our builds (see Compatibility).
+- **Gas Pipe:** does not work yet. The item exists and its recipe loads, but it connects to nothing on any build, because Mekanism support is not in yet (known gap). Planned, built-in numbers: 800, 2,400 or 7,000 mB per tick.
 - **Redstone Pipe:** carries one redstone signal along the run.
 - **ME Pipe and Dense ME Pipe:** join Applied Energistics 2 grids with 8 channels (32 for Dense). The recipes only load with AE2.
 - **Storage Pipe:** joins BarelyStorage networks and ordinary inventories at a fixed speed. The recipe only exists on Minecraft 26.1.2, 26.2 and 26.3, where BarelyStorage exists; on 1.20.1 and 1.21.1 the pipe can only join inventories.
@@ -38,7 +38,7 @@ Docs and recipes: [itmecasey.com/wiki/barelypipes](https://itmecasey.com/wiki/ba
 
 - **BarelyStorage** (our storage mod, Minecraft 26.1.2, 26.2 and 26.3): the Storage Pipe moves items between its racks, nodes and cables, ordinary inventories, and other networks.
 - **Applied Energistics 2:** ME pipes carry a real ME grid. Recipes load only when AE2 is installed.
-- **Mekanism:** gas pipes work with Mekanism on NeoForge 1.21.1 and on Forge and NeoForge 1.20.1. On the other builds the Gas Pipe item exists but has nothing to carry.
+- **Mekanism:** not supported yet. The Gas Pipe does not work on any build: AeroFlux's Mekanism support was not carried over, so the item exists and its recipe loads, but it connects to nothing. This is a known gap.
 - **Forge Energy and the standard fluid and item handlers:** work with any mod that speaks them.
 - Item viewers (BEI, REI, JEI, EMI) and the in-world info mods Show Me What This Is and Jade have no plugin yet. This is on the plan, not done.
 
@@ -46,7 +46,7 @@ Install: put the jar for your Minecraft version in `mods` on the server and on e
 
 The pictures on this page are illustrations drawn for the listing, not game screenshots.
 
-**Tested:** the shared pipe logic passes 98 unit tests, and the NeoForge 26.1.2 build passes a headless server self test of 219 checks (item, fluid, energy, gas and redstone transfer, the tools, the pipe screen's server side, and the Storage Pipe moving items in both directions against a real BarelyStorage rack). The other builds are still being ported and have not been run. Nothing has been seen in a real game client yet: how the pipes, screens and textures look in game, multiplayer, AE2 grids with real devices, Mekanism gas in a real game and long play sessions are all unchecked.
+**Tested:** the shared pipe logic passes 98 unit tests, and every one of the ten builds passes a headless server self test (219 checks on 26.x including the Storage Pipe moving items in both directions against a real BarelyStorage rack; 213 on 1.20.1 and 1.21.1). Each build also ran a scripted client tour in a real game on 2026-11-06, with the screenshots read: the seven pipes, the three tiers, plates and plugs on a chest, and the pipe screen render correctly. Not checked: multiplayer, long play sessions, AE2 grids with real devices, and gas pipes (known gap: this version has no Mekanism support, so the Gas Pipe does not work yet on any build).
 
 ![FAQ](https://raw.githubusercontent.com/ItMeCasey/BarelyPipes/main/branding/banners/h_faq.png)
 
@@ -54,7 +54,7 @@ The pictures on this page are illustrations drawn for the listing, not game scre
 
 **Does it need to be on the server?** Yes, on the server and on every client.
 
-**Does it need another mod?** No. BarelyStorage, Applied Energistics 2 and Mekanism are optional and only unlock their own pipes.
+**Does it need another mod?** No. BarelyStorage and Applied Energistics 2 are optional and only unlock their own pipes. Mekanism is not supported yet, so the Gas Pipe does not work.
 
 **Why can I not craft the Storage Pipe on 1.21.1?** BarelyStorage has no build for 1.20.1 or 1.21.1, so the pipe has no recipe there and can only join inventories.
 

@@ -23,7 +23,7 @@ Optional mods unlock their pipes:
 
 - **BarelyStorage** (Minecraft 26.1.2, 26.2 and 26.3 only): the Storage Pipe joins its racks, cables and nodes. It has no recipe on 1.20.1 and 1.21.1, where it can only join ordinary inventories.
 - **Applied Energistics 2:** the ME Pipe and Dense ME Pipe join AE2 grids (their recipes load only with AE2).
-- **Mekanism:** the Gas Pipe carries Mekanism gases. It works on NeoForge 1.21.1 and on Forge and NeoForge 1.20.1 (the builds where AeroFlux had Mekanism support). On the other builds the Gas Pipe item exists but has nothing to carry.
+- **Mekanism:** the Gas Pipe does not work yet, on any build. AeroFlux's Mekanism support was not carried over, so the Gas Pipe item exists and its recipe loads, but it connects to nothing. This is a known gap.
 
 ## Features
 
@@ -34,7 +34,7 @@ Optional mods unlock their pipes:
   |---|---|---|---|
   | Fluid, mB per tick | 250 | 650 | 1,800 |
   | Energy, FE per tick | 4,000 | 16,000 | 64,000 |
-  | Gas, mB per tick | 800 | 2,400 | 7,000 |
+  | Gas, mB per tick (planned, built-in numbers; the Gas Pipe does not work yet) | 800 | 2,400 | 7,000 |
   | Items per operation | 4 | 8 | 16 |
   | Ticks between operations | 16 | 12 | 8 |
 
@@ -57,17 +57,14 @@ Optional mods unlock their pipes:
 | `debugLogging` | `false` | Logs extra detail about pipe networks |
 | `protectionEnabled` | `true` | The Conduit Tool asks the standard permission events (claim mods) before it acts |
 
-These are the options of the NeoForge and Forge 26.1.2 builds. The builds that are still being ported carry AeroFlux's larger config until they are done. Tier rates are built in and not configurable yet.
+Every build has these two options. Tier rates are built in and not configurable yet.
 
 ## What was checked
 
-<!-- TESTED: update this section after the client checks. It is one of three places that state what was verified
-     (the others are curseforge/DESCRIPTION.md and the wiki page known-gaps). -->
-
-- Shared pipe logic (`common/`): 98 unit tests, passing.
-- NeoForge 26.1.2: builds and passes the headless server self test (219 checks: item, fluid, energy, gas and redstone transfer, tool actions, the pipe screen's server side, and the Storage Pipe against a real BarelyStorage rack, both directions).
-- The other nine builds (Forge 26.1.2, Forge and NeoForge 26.2, 26.3, 1.21.1 and 1.20.1) are being ported and have not been checked.
-- Nothing has been seen in a real game client: how the pipes, the pipe screen and the textures look in game, multiplayer, AE2 grids with real devices, Mekanism gas and long sessions are all unchecked.
+- Shared pipe logic (`common/`): 98 unit tests, passing in every module.
+- All ten builds compile and pass the headless server self test (219 checks on 26.x: item, fluid, energy and redstone transfer, tool actions, the pipe screen's server side, and on 26.x the Storage Pipe against a real BarelyStorage rack, both directions; 213 checks on 1.20.1 and 1.21.1).
+- All ten builds ran a scripted client tour in a real game (2026-11-06) and the screenshots were read (`docs/frames/<module>/`): pipe models, tier colors, plates and plugs, the pipe screen and, on 26.x, the Storage Pipe next to a BarelyStorage rack. A few frames of Forge 26.1.2 and Forge 26.2 were not read.
+- Not checked: multiplayer, long sessions, ME pipes against real AE2 devices, and gas pipes (known gap: this version has no Mekanism support, so the Gas Pipe does not work yet and connects to nothing on any build).
 - Not integrated yet: item viewers (BEI, REI, JEI, EMI) and in-world info (Show Me What This Is, Jade).
 
 ## Build and test

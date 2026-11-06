@@ -14,7 +14,7 @@ First version. Barely Pipes is the pipe bundles of AeroFlux as a mod of its own.
 - The pipe screen with glyphs: face mode, distribution, throughput, upgrade slots, filter and priority.
 - Pipe Wrench: cycles a face's mode, or the distribution mode while sneaking.
 - Conduit Tool: Edit, Remove, Remove run, Copy, Paste (also along a run) and Inspect, with a claim check through the standard permission events.
-- ME pipes join Applied Energistics 2 grids; gas pipes join Mekanism where Mekanism exists for the build (NeoForge 1.21.1, Forge and NeoForge 1.20.1).
+- ME pipes join Applied Energistics 2 grids; the Gas Pipe does not work yet on any build (Mekanism support was not carried over from AeroFlux, so it connects to nothing; known gap).
 - Recipes with vanilla ingredients for every pipe, tool and upgrade (ME pipe recipes load only with AE2).
 - Config file `config/barelypipes-common.toml` with `debugLogging` and `protectionEnabled`.
 - Forge and NeoForge on Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3. The release is ten jars, one per loader and Minecraft version, named `barelypipes-<loader>-mc<mc>-<version>.jar`.
