@@ -264,6 +264,32 @@ public final class ShotTour {
             far.refreshConnections();
             entity.changed();
         }));
+        then(10, () -> onServer(srv -> {
+            BlockPos pos = new BlockPos(ox, ground, 0);
+            var state = srv.overworld().getBlockState(pos);
+            var shape = state.getShape(srv.overworld(), pos);
+            LOGGER.info("BARELYPIPES-SHOTS shape boxes (pixels): {}", shape.toAabbs().stream().map(b -> String.format(Locale.ROOT,
+                    "[%.2f %.2f %.2f %.2f %.2f %.2f]", b.minX * 16, b.minY * 16, b.minZ * 16, b.maxX * 16, b.maxY * 16, b.maxZ * 16)).toList());
+            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) srv.overworld().getBlockEntity(pos);
+            // Real vanilla rays through the shape, from the east, at y = fluid pipe row, at three depths.
+            double[][] aims = {{0.88, 0}, {0.66, 0}, {0.5, 0}};
+            String[] names = {"plug", "arm", "core"};
+            for (int i = 0; i < 3; i++) {
+                for (double y : new double[] {0.5 - 0.1875, 0.5 + 0.1875}) {
+                    Vec3 from = new Vec3(ox + 2.0, ground + y, aims[i][0]);
+                    Vec3 to = new Vec3(ox + 0.0, ground + y, aims[i][0]);
+                    var hit = shape.clip(from, to, pos);
+                    if (hit == null) {
+                        LOGGER.info("BARELYPIPES-SHOTS ray {} y={} misses", names[i], y);
+                        continue;
+                    }
+                    Vec3 local = hit.getLocation().subtract(ox, ground, 0).scale(16.0);
+                    LOGGER.info("BARELYPIPES-SHOTS ray {} y={} local=({}, {}, {}) -> {}", names[i], y, String.format(Locale.ROOT, "%.2f", local.x),
+                            String.format(Locale.ROOT, "%.2f", local.y), String.format(Locale.ROOT, "%.2f", local.z),
+                            com.itmecasey.barelypipes.conduit.config.PipeConfigActions.resolveTarget(entity.bundle(), local.x, local.y, local.z));
+                }
+            }
+        }));
         // Plug: block z 12..16 is world z 0.75..1.0; arm: z 9.5..12; core: z 6.5..9.5.
         then(4, () -> moveTo(new Vec3(ox + 1.2, ground + 0.75, 0.88), new Vec3(ox + 0.5, ground + 0.5, 0.88)));
         shoot("outline_plug", 30);
@@ -295,9 +321,9 @@ public final class ShotTour {
         }));
         for (int i = 0; i < 4; i++) {
             int bx = 26 + i * 3;
-            then(4, () -> moveTo(new Vec3(bx - 0.5, ground + 0.9, -0.55), new Vec3(bx + 0.5, ground + 0.5, 0.85)));
+            then(4, () -> moveTo(new Vec3(bx + 0.5 - 1.5, ground + 0.75, -0.15), new Vec3(bx + 0.5, ground + 0.5, 0.76)));
             shoot("plug_arrows_" + fluid[i].name().toLowerCase(Locale.ROOT), i == 0 ? 30 : 6);
-            then(2, () -> moveTo(new Vec3(bx + 1.5, ground + 0.9, -0.55), new Vec3(bx + 0.5, ground + 0.5, 0.85)));
+            then(2, () -> moveTo(new Vec3(bx + 0.5 + 1.5, ground + 0.75, -0.15), new Vec3(bx + 0.5, ground + 0.5, 0.76)));
             shoot("plug_arrows_" + fluid[i].name().toLowerCase(Locale.ROOT) + "_right", 6);
         }
     }
