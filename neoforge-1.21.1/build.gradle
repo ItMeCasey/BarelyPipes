@@ -140,3 +140,18 @@ repositories {
 dependencies {
     compileOnly "maven.modrinth:ae2:${ae2_version}"
 }
+
+// Mekanism is optional: the Gas Pipe carries its chemicals when it is installed. Compile-only here, so the release jar neither
+// contains nor requires it. -PdevTools runs it in the dev client and server (for the gas self test and the gas client scene);
+// -PnoMekanism leaves it out of that dev run, which checks that the mod loads and passes its self test without Mekanism.
+// localRuntime is a dev-run-only configuration: present for runClient and runServer, never pulled in by anything that depends on this mod.
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
+}
+dependencies {
+    compileOnly "maven.modrinth:mekanism:${mekanism_version}"
+    if (project.hasProperty('devTools') && !project.hasProperty('noMekanism')) {
+        localRuntime "maven.modrinth:mekanism:${mekanism_version}"
+    }
+}

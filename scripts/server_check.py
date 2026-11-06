@@ -4,7 +4,7 @@ Usage: python scripts/server_check.py <layer> [<layer> ...]      e.g. neoforge-1
        python scripts/server_check.py all
 
 Starts `gradlew runServer` with BARELYPIPES_SELFTEST set (so the mod's own self test runs once the server is up) in the layer with eula accepted and the layer's registered test port (8986-8995), waits for the
-server's "Done" line, checks that the log names the mod and has no mod-loading errors, then stops the server. Prints
+server's "Done" line (set BARELYPIPES_NO_MEKANISM=1 to leave Mekanism out of the dev run, for the "without Mekanism" check), checks that the log names the mod and has no mod-loading errors, then stops the server. Prints
 `SERVER PASS <layer>` or `SERVER FAIL <layer>: why`. Needs no display.
 """
 import os
@@ -43,7 +43,8 @@ def check(layer):
     env = dict(os.environ, BARELYPIPES_SELFTEST="1")
     windows = os.name == "nt"
     command = ["cmd", "/c", str(folder / "gradlew.bat")] if windows else [str(folder / "gradlew")]
-    proc = subprocess.Popen(command + ["runServer", "--no-daemon", "-q", "-PdevTools"], cwd=folder, env=env,
+    extra = ["-PnoMekanism"] if os.environ.get("BARELYPIPES_NO_MEKANISM") else []
+    proc = subprocess.Popen(command + ["runServer", "--no-daemon", "-q", "-PdevTools"] + extra, cwd=folder, env=env,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace",
                             start_new_session=not windows)
 

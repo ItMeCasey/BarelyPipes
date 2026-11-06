@@ -1,6 +1,7 @@
 package com.itmecasey.barelypipes.conduit;
 
 import com.itmecasey.barelypipes.compat.ae2.Ae2Compat;
+import com.itmecasey.barelypipes.compat.mekanism.MekanismCompat;
 import com.itmecasey.barelypipes.core.conduit.BundleState;
 import com.itmecasey.barelypipes.core.conduit.ConnectionMode;
 import com.itmecasey.barelypipes.core.conduit.Face;
@@ -73,6 +74,8 @@ public final class Connections {
             case ENERGY -> level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side) != null;
             // ME pipes attach to anything with an AE2 grid node on that side (cables, drives, interfaces).
             case ME, DENSE_ME -> Ae2Compat.attaches(level, pos, side);
+            // Gas pipes attach to anything that handles Mekanism chemicals on that side (inert without Mekanism).
+            case GAS -> MekanismCompat.offersChemicals(level, pos, side);
             default -> false;
         };
     }
