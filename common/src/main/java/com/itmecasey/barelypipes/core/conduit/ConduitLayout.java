@@ -73,8 +73,12 @@ public final class ConduitLayout {
      * @param type the pipe it belongs to, or {@code null} for the junction and plates
      * @param face the face an arm, plate or plug points to, or {@code null}
      * @param axis the axis a pipe piece runs along (0 x, 1 y, 2 z), or -1 when it has none
+     * @param mode the connection mode of the pipe at a plug's face, or {@code null} for every other piece
      */
-    public record Piece(Kind kind, Box box, PipeType type, Face face, int axis) {
+    public record Piece(Kind kind, Box box, PipeType type, Face face, int axis, ConnectionMode mode) {
+        public Piece(Kind kind, Box box, PipeType type, Face face, int axis) {
+            this(kind, box, type, face, axis, null);
+        }
     }
 
     /** A spot in the bundle, counted in steps from the center along x, y and z. */
@@ -171,7 +175,8 @@ public final class ConduitLayout {
             boolean plated = false;
             for (PipeType type : pipes) {
                 if (bundle.isConnected(type.lane(), face) && bundle.isExternal(type.lane(), face)) {
-                    pieces.add(new Piece(Kind.PLUG, plug(arms.get(type).get(face), face), type, face, axisOf(face)));
+                    pieces.add(new Piece(Kind.PLUG, plug(arms.get(type).get(face), face), type, face, axisOf(face),
+                            bundle.mode(type.lane(), face)));
                     plated = true;
                 }
             }
@@ -184,22 +189,22 @@ public final class ConduitLayout {
     }
 
     /**
-     * The boxes to use for hit testing and collision. Arms are widened to a core's width there, so a
-     * 2 pixel pipe is not fiddly to aim at.
+     * The boxes to use for the outline and collision: exactly the boxes that are drawn, so the
+     * outline hugs every arm, core, junction, plate and plug.
      */
     public List<Box> hitBoxes() {
         List<Box> boxes = new ArrayList<>(pieces.size());
         for (Piece piece : pieces) {
-            boxes.add(piece.kind() == Kind.ARM ? widen(piece.box(), piece.axis()) : piece.box());
+            boxes.add(piece.box());
         }
         return boxes;
     }
 
-    /** The arm of a pipe toward a face, or {@code null} if it has none there. */
+    /** The arm of a pipe toward a face, as drawn, or {@code null} if it has none there. */
     public Box armOf(PipeType type, Face face) {
         for (Piece piece : pieces) {
             if (piece.kind() == Kind.ARM && piece.type() == type && piece.face() == face) {
-                return widen(piece.box(), piece.axis());
+                return piece.box();
             }
         }
         return null;
@@ -215,26 +220,112 @@ public final class ConduitLayout {
         return null;
     }
 
+    /** How far from a drawn box a point may be and still count as on it (click points sit on the surface). */
+    public static final double PICK_EPSILON = 0.05;
+
     /**
-     * The pipe nearest a point, for wrench and tool targeting; ties go to the lower lane.
+     * What a click hit.
      *
-     * @return the nearest pipe, or {@code null} if the bundle is empty
+     * @param pipe the pipe
+     * @param face the face its arm or plug points to, or {@code null} for a core or the junction
+     * @param kind the kind of piece that was hit ({@link Kind#PLATE} hits resolve to a plug)
      */
-    public PipeType nearestPipe(double x, double y, double z) {
-        PipeType best = null;
+    public record Pick(PipeType pipe, Face face, Kind kind) {
+    }
+
+    /** Which piece wins when a point touches several: what you see in front first. */
+    private static int rank(Kind kind) {
+        return switch (kind) {
+            case PLUG -> 0;
+            case ARM -> 1;
+            case CORE -> 2;
+            case JUNCTION -> 3;
+            case PLATE -> 4;
+        };
+    }
+
+    /**
+     * The piece a point on the bundle's surface belongs to, using the drawn boxes. A plug beats an
+     * arm, an arm beats a core, and a point on a plate belongs to the nearest plug on that plate.
+     *
+     * @return the pick, or {@code null} if the point is not on any piece
+     */
+    public Pick pick(double x, double y, double z) {
+        Piece best = null;
         double bestDistance = Double.MAX_VALUE;
         for (Piece piece : pieces) {
-            if (piece.type() == null) {
+            double distance = piece.box().distanceTo(x, y, z);
+            if (distance > PICK_EPSILON) {
                 continue;
             }
-            Box box = piece.kind() == Kind.ARM ? widen(piece.box(), piece.axis()) : piece.box();
-            double distance = box.distanceTo(x, y, z);
-            if (distance < bestDistance) {
+            if (best == null || rank(piece.kind()) < rank(best.kind())
+                    || (rank(piece.kind()) == rank(best.kind()) && distance < bestDistance - 1.0e-9
+                            && piece.type() != null)) {
+                best = piece;
                 bestDistance = distance;
-                best = piece.type();
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        switch (best.kind()) {
+            case PLATE -> {
+                Piece plug = nearestPiece(x, y, z, Kind.PLUG, best.face());
+                return plug == null ? null : new Pick(plug.type(), plug.face(), Kind.PLUG);
+            }
+            case JUNCTION -> {
+                Piece near = nearestPiece(x, y, z, null, null);
+                return near == null ? null : new Pick(near.type(), near.kind() == Kind.CORE ? null : near.face(), Kind.JUNCTION);
+            }
+            default -> {
+                return new Pick(best.type(), best.face(), best.kind());
+            }
+        }
+    }
+
+    /** The pick of a ray through the bundle: the first drawn box it enters, or {@code null} if it misses. */
+    public Pick pick(double ox, double oy, double oz, double dx, double dy, double dz) {
+        double bestT = Double.NaN;
+        for (Piece piece : pieces) {
+            double t = piece.box().rayEntry(ox, oy, oz, dx, dy, dz);
+            if (!Double.isNaN(t) && (Double.isNaN(bestT) || t < bestT)) {
+                bestT = t;
+            }
+        }
+        return Double.isNaN(bestT) ? null : pick(ox + dx * bestT, oy + dy * bestT, oz + dz * bestT);
+    }
+
+    /** The typed piece nearest a point, optionally limited to one kind and face; ties go to the lower lane. */
+    private Piece nearestPiece(double x, double y, double z, Kind kind, Face face) {
+        Piece best = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (Piece piece : pieces) {
+            if (piece.type() == null || (kind != null && piece.kind() != kind) || (face != null && piece.face() != face)) {
+                continue;
+            }
+            double distance = piece.box().distanceTo(x, y, z);
+            if (distance < bestDistance - 1.0e-9 || (Math.abs(distance - bestDistance) <= 1.0e-9 && best != null
+                    && rank(piece.kind()) < rank(best.kind()))) {
+                bestDistance = distance;
+                best = piece;
             }
         }
         return best;
+    }
+
+    /**
+     * The pipe a point belongs to, for wrench and tool targeting: the pipe whose drawn piece the
+     * point is on, or else the nearest pipe; ties go to the lower lane.
+     *
+     * @return the pipe, or {@code null} if the bundle is empty
+     */
+    public PipeType nearestPipe(double x, double y, double z) {
+        Pick pick = pick(x, y, z);
+        if (pick != null) {
+            return pick.pipe();
+        }
+        Piece near = nearestPiece(x, y, z, null, null);
+        return near == null ? null : near.type();
     }
 
     /**
@@ -376,13 +467,5 @@ public final class ConduitLayout {
             case WEST -> new Box(near, y0, z0, far, y1, z1);
             case EAST -> new Box(16 - far, y0, z0, 16 - near, y1, z1);
         };
-    }
-
-    /** An arm widened to a core's width across its axis, for easier aiming. */
-    private static Box widen(Box box, int axis) {
-        double grow = (CORE_SIZE - PIPE_SIZE) / 2.0;
-        return new Box(axis == 0 ? box.minX() : box.minX() - grow, axis == 1 ? box.minY() : box.minY() - grow,
-                axis == 2 ? box.minZ() : box.minZ() - grow, axis == 0 ? box.maxX() : box.maxX() + grow,
-                axis == 1 ? box.maxY() : box.maxY() + grow, axis == 2 ? box.maxZ() : box.maxZ() + grow);
     }
 }
