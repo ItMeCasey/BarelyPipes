@@ -50,7 +50,6 @@ final class GasSelfTest {
 
     private static BlockPos source;
     private static BlockPos sink;
-    private static Holder<Chemical> hydrogen;
 
     private GasSelfTest() {
     }
@@ -75,16 +74,16 @@ final class GasSelfTest {
             if (SelfTest.blockEntitiesTick(level, new BlockPos(2, Y, Z))) {
                 build(level, Y, Z);
                 built = true;
-                previous = amount(level, source);
+                previous = amountOf(level, source, HYDROGEN);
             }
             return;
         }
         tick++;
-        long now = amount(level, source);
+        long now = amountOf(level, source, HYDROGEN);
         largestStep = Math.max(largestStep, previous - now);
         previous = now;
         if (tick == CHECK_EARLY) {
-            earlyArrived = amount(level, sink);
+            earlyArrived = amountOf(level, sink, HYDROGEN);
         }
         if (tick == CHECK_LATE) {
             check(level);
@@ -100,10 +99,8 @@ final class GasSelfTest {
         // the full one's front meets the pipe line and the empty one takes it in through its back.
         placeTank(level, source, Direction.EAST);
         placeTank(level, sink, Direction.EAST);
-        hydrogen = level.registryAccess().registryOrThrow(MekanismAPI.CHEMICAL_REGISTRY_NAME)
-                .getHolderOrThrow(ResourceKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME, HYDROGEN));
         SelfTest.check("gas: a Mekanism chemical tank offers a chemical handler", MekanismChemicals.handler(level, source, null) != null);
-        fill(level, source);
+        fillTank(level, source, HYDROGEN, START);
         for (int x = 2; x <= 4; x++) {
             BlockPos pos = new BlockPos(x, y, z);
             level.setBlock(pos, ModBlocks.CONDUIT_BUNDLE.get().defaultBlockState(), Block.UPDATE_ALL);
@@ -114,8 +111,8 @@ final class GasSelfTest {
     }
 
     static void check(ServerLevel level) {
-        long left = amount(level, source);
-        long arrived = amount(level, sink);
+        long left = amountOf(level, source, HYDROGEN);
+        long arrived = amountOf(level, sink, HYDROGEN);
         SelfTest.check("gas: a gas pipe attaches to a Mekanism chemical tank",
                 bundle(level, new BlockPos(2, source.getY(), source.getZ())).bundle().isConnected(PipeType.GAS.lane(), Face.WEST));
         SelfTest.check("gas: hydrogen arrives in the far tank through three gas pipes", arrived > 0);
@@ -132,7 +129,7 @@ final class GasSelfTest {
      * item, so a bare {@code setBlock} leaves every side switched off; applying the item's data
      * gives the tank the same sides it has when placed by hand.
      */
-    private static void placeTank(ServerLevel level, BlockPos pos, Direction facing) {
+    static void placeTank(ServerLevel level, BlockPos pos, Direction facing) {
         Block tank = BuiltInRegistries.BLOCK.get(TANK);
         BlockState state = tank.defaultBlockState();
         if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
@@ -146,17 +143,20 @@ final class GasSelfTest {
         }
     }
 
-    /** Fills the source tank through whichever side takes chemicals in. */
-    private static void fill(ServerLevel level, BlockPos pos) {
+    /** Fills a tank through whichever side takes chemicals in. */
+    static void fillTank(ServerLevel level, BlockPos pos, ResourceLocation id, long amount) {
+        Holder<Chemical> chemical = level.registryAccess().registryOrThrow(MekanismAPI.CHEMICAL_REGISTRY_NAME)
+                .getHolderOrThrow(ResourceKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME, id));
         for (Direction side : Direction.values()) {
             IChemicalHandler handler = MekanismChemicals.handler(level, pos, side);
-            if (handler != null && handler.insertChemical(new ChemicalStack(hydrogen, START), Action.EXECUTE).isEmpty()) {
+            if (handler != null && handler.insertChemical(new ChemicalStack(chemical, amount), Action.EXECUTE).isEmpty()) {
                 return;
             }
         }
     }
 
-    private static long amount(ServerLevel level, BlockPos pos) {
+    /** How much of a chemical a block holds, in mB. */
+    static long amountOf(net.minecraft.world.level.Level level, BlockPos pos, ResourceLocation id) {
         IChemicalHandler handler = MekanismChemicals.handler(level, pos, null);
         if (handler == null) {
             return 0;
@@ -164,7 +164,7 @@ final class GasSelfTest {
         long total = 0;
         for (int tank = 0; tank < handler.getChemicalTanks(); tank++) {
             ChemicalStack held = handler.getChemicalInTank(tank);
-            if (held.is(hydrogen)) {
+            if (!held.isEmpty() && id.toString().equals(MekanismChemicals.id(held))) {
                 total += held.getAmount();
             }
         }

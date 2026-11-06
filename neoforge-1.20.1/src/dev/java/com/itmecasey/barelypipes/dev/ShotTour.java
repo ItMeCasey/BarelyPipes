@@ -224,6 +224,11 @@ public final class ShotTour {
         shoot("pipe_screen_energy", 40);
         then(2, () -> onServer(srv -> srv.getPlayerList().getPlayers().get(0).closeContainer()));
 
+        // With Mekanism installed: two gas tanks joined by a gas pipe bundle, the gas pipe screen, the transfer.
+        if (com.itmecasey.barelypipes.compat.mekanism.MekanismCompat.loaded()) {
+            GasShots.plan(ground);
+        }
+
         then(20, () -> {
             LOGGER.info("BARELYPIPES-SHOTS DONE");
             stage = Stage.DONE;
@@ -231,7 +236,7 @@ public final class ShotTour {
         });
     }
 
-    private static ConduitBundleBlockEntity place(BlockPos pos) {
+    static ConduitBundleBlockEntity place(BlockPos pos) {
         MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
         server.overworld().setBlock(pos, ModBlocks.CONDUIT_BUNDLE.get().defaultBlockState(), Block.UPDATE_ALL);
         return (ConduitBundleBlockEntity) server.overworld().getBlockEntity(pos);
