@@ -144,3 +144,9 @@ dependencies {
     // BarelyStorage (our own storage network mod) is optional: the storage pipe joins its networks when it is installed.
     compileOnly files('../libs/barelystorage-mc26.1.2.jar')
 }
+
+// SMWTI (Show Me What This Is) is an optional look-at overlay of ours. Only its API is compiled against, from the jar in
+// ../libs (the com.itmecasey.smwti.api classes of SMWTI's own jar); the plugin class is never loaded unless SMWTI is installed.
+dependencies {
+    compileOnly files('../libs/smwti-api-26.1.2.jar')
+}
