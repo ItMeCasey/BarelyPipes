@@ -22,8 +22,8 @@ import uuid
 import zipfile
 from pathlib import Path
 
-# CurseForge project id: 0 until Casey creates the project and tells the Project Manager. A dry run works without it.
-PROJECT_ID = 0
+# CurseForge project id (set by the Project Manager).
+PROJECT_ID = 1787208
 API = "https://minecraft.curseforge.com/api"
 
 # Minecraft version -> Java version name on CurseForge
