@@ -59,25 +59,21 @@ jobs:
             !${{ matrix.layer }}/build/libs/*-sources.jar
             !${{ matrix.layer }}/build/libs/*-dev.jar
 
-  combine:
-    # One combined jar per Minecraft version that holds both loaders; 1.20.1 stays two jars, because Forge and NeoForge there
-    # share the same metadata file name and the same classes.
+  package:
+    # The ten jars, one per loader and Minecraft version. Forge and NeoForge builds of a version share class names with
+    # different code, so they are never merged into one jar.
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v5
         with:
           path: layers
-      - name: Package
+      - name: Collect the jars
         run: |
-          version=$(grep -h '^mod_version=' forge-26.1.2/gradle.properties | cut -d= -f2)
           mkdir -p dist
-          for mc in 1.21.1 26.1.2 26.2 26.3; do
-            python3 scripts/combine_jars.py "dist/barelypipes-mc$mc-$version.jar" layers/*-$mc/*.jar
-          done
-          cp layers/forge-1.20.1/barelypipes-forge-mc1.20.1-$version.jar layers/neoforge-1.20.1/barelypipes-neoforge-mc1.20.1-$version.jar dist/
+          cp layers/*/barelypipes-*.jar dist/
           ls -la dist
+          test "$(ls dist/*.jar | wc -l)" -eq 10
       - name: The release jars hold no development tools
         run: |
           for jar in dist/*.jar; do
@@ -85,5 +81,5 @@ jobs:
           done
       - uses: actions/upload-artifact@v5
         with:
-          name: combined-jars
+          name: jars
           path: dist/*.jar

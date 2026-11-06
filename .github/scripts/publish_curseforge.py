@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
-"""Uploads the Barely Pipes jars to CurseForge: one combined jar per Minecraft version (1.21.1, 26.1.2, 26.2, 26.3) and, for 1.20.1, a separate Forge jar and NeoForge jar.
+"""Uploads the Barely Pipes jars to CurseForge: one jar per loader and Minecraft version (ten jars).
 
 Usage:
   publish_curseforge.py --jars DIR --version 2026.11.1 --changelog-file notes.md [--release-type beta] [--dry-run]
   publish_curseforge.py --list-versions
 
-DIR holds barelypipes-mc<minecraft>-<version>.jar files, as made by scripts/combine_jars.py, and for 1.20.1
-barelypipes-forge-mc1.20.1-<version>.jar and barelypipes-neoforge-mc1.20.1-<version>.jar (Forge and NeoForge share one
-metadata file name there, so they cannot be merged). A combined jar carries the Forge and NeoForge layers and is uploaded
-once per Minecraft version with both loaders ticked. The upload token
+DIR holds barelypipes-<loader>-mc<minecraft>-<version>.jar files. The two loader builds of one Minecraft version use the same
+class names for different code, so they cannot be merged into one jar and are uploaded as separate files. The upload token
 is read from the CURSEFORGE_TOKEN environment variable and is never printed. Only the Python standard library is used.
 """
 import argparse
@@ -36,7 +34,7 @@ MINECRAFT = {
 }
 LOADERS = ("Forge", "NeoForge")
 # Minecraft versions where each loader has its own jar instead of one combined jar.
-SEPARATE = ("1.20.1",)
+SEPARATE = tuple(MINECRAFT)
 RELEASE_TYPES = ("alpha", "beta", "release")
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -159,7 +157,7 @@ def main():
             inside = jar_versions(jar)
             wanted = {"META-INF/mods.toml"} if len(loaders) == 1 and loaders[0] == "Forge" else (
                 {"META-INF/neoforge.mods.toml"} if len(loaders) == 1 else {"META-INF/mods.toml", "META-INF/neoforge.mods.toml"})
-            if minecraft in SEPARATE:
+            if minecraft == "1.20.1":
                 wanted = {"META-INF/mods.toml"}  # NeoForge 1.20.1 still reads mods.toml
             if set(inside) != wanted or set(inside.values()) != {args.version}:
                 sys.exit(f"{jar.name} does not carry version {args.version} in its loader metadata: {inside}")
