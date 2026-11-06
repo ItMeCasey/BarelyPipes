@@ -28,6 +28,14 @@ public class BarelyPipes {
         ModMenus.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, BarelyPipesConfig.SPEC);
+        if (System.getProperty("barelypipes.dev") != null) {
+            // Development tools (test tank, self test) exist only in builds made with -PdevTools.
+            try {
+                Class.forName("com.itmecasey.barelypipes.dev.DevHooks").getMethod("install", IEventBus.class).invoke(null, modEventBus);
+            } catch (ReflectiveOperationException e) {
+                LOGGER.warn("barelypipes.dev is set but this build has no development tools");
+            }
+        }
         LOGGER.info("Barely Pipes loaded (NeoForge 26.1.2)");
     }
 }
