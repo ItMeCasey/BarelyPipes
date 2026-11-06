@@ -1,0 +1,89 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  versions:
+    # Releases are tagged v<mod_version>, so every module must carry the same number.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: All modules agree on mod_version
+        run: |
+          versions=$(grep -h '^mod_version=' */gradle.properties | sort -u)
+          echo "$versions"
+          test "$(echo "$versions" | wc -l)" -eq 1
+
+  build:
+    # Build, run the 98 common unit tests, and run the headless self test (a real server, a test tank, real chests and,
+    # on 26.x, a real BarelyStorage rack) for every module.
+    needs: versions
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {layer: neoforge-1.20.1, java: 17}
+          - {layer: forge-1.20.1, java: 17}
+          - {layer: neoforge-1.21.1, java: 21}
+          - {layer: forge-1.21.1, java: 21}
+          - {layer: neoforge-26.1.2, java: 25}
+          - {layer: forge-26.1.2, java: 25}
+          - {layer: neoforge-26.2, java: 25}
+          - {layer: forge-26.2, java: 25}
+          - {layer: neoforge-26.3, java: 25}
+          - {layer: forge-26.3, java: 25}
+    runs-on: ubuntu-latest
+    env:
+      IMC_MAVEN_USER: ${{ secrets.IMC_MAVEN_USER }}
+      IMC_MAVEN_PASSWORD: ${{ secrets.IMC_MAVEN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+      - run: chmod +x ${{ matrix.layer }}/gradlew
+      - name: Build and unit tests
+        working-directory: ${{ matrix.layer }}
+        run: ./gradlew build --no-daemon
+      - name: Headless self test
+        run: python3 scripts/server_check.py ${{ matrix.layer }}
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ${{ matrix.layer }}
+          path: |
+            ${{ matrix.layer }}/build/libs/*.jar
+            !${{ matrix.layer }}/build/libs/*-sources.jar
+            !${{ matrix.layer }}/build/libs/*-dev.jar
+
+  combine:
+    # One combined jar per Minecraft version that holds both loaders; 1.20.1 stays two jars, because Forge and NeoForge there
+    # share the same metadata file name and the same classes.
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          path: layers
+      - name: Package
+        run: |
+          version=$(grep -h '^mod_version=' forge-26.1.2/gradle.properties | cut -d= -f2)
+          mkdir -p dist
+          for mc in 1.21.1 26.1.2 26.2 26.3; do
+            python3 scripts/combine_jars.py "dist/barelypipes-mc$mc-$version.jar" layers/*-$mc/*.jar
+          done
+          cp layers/forge-1.20.1/barelypipes-forge-mc1.20.1-$version.jar layers/neoforge-1.20.1/barelypipes-neoforge-mc1.20.1-$version.jar dist/
+          ls -la dist
+      - name: The release jars hold no development tools
+        run: |
+          for jar in dist/*.jar; do
+            if unzip -l "$jar" | grep -E "/dev/|SelfTest|test_tank|DevHooks"; then echo "dev files in $jar"; exit 1; fi
+          done
+      - uses: actions/upload-artifact@v5
+        with:
+          name: combined-jars
+          path: dist/*.jar

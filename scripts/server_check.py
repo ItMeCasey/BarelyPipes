@@ -3,7 +3,7 @@
 Usage: python scripts/server_check.py <layer> [<layer> ...]      e.g. neoforge-1.21.1 forge-26.2
        python scripts/server_check.py all
 
-Starts `gradlew runServer` with BARELYPIPES_SELFTEST set (so the mod's own generator self test runs once the server is up) in the layer with eula accepted and the layer's registered test port (8960-8967), waits for the
+Starts `gradlew runServer` with BARELYPIPES_SELFTEST set (so the mod's own self test runs once the server is up) in the layer with eula accepted and the layer's registered test port (8986-8995), waits for the
 server's "Done" line, checks that the log names the mod and has no mod-loading errors, then stops the server. Prints
 `SERVER PASS <layer>` or `SERVER FAIL <layer>: why`. Needs no display.
 """
@@ -41,8 +41,11 @@ def check(layer):
         "motd=BarelyPipes server check\nmax-tick-time=-1\n")
     log = []
     env = dict(os.environ, BARELYPIPES_SELFTEST="1")
-    proc = subprocess.Popen(["cmd", "/c", str(folder / "gradlew.bat"), "runServer", "--no-daemon", "-q", "-PdevTools"], cwd=folder, env=env,
-                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace")
+    windows = os.name == "nt"
+    command = ["cmd", "/c", str(folder / "gradlew.bat")] if windows else [str(folder / "gradlew")]
+    proc = subprocess.Popen(command + ["runServer", "--no-daemon", "-q", "-PdevTools"], cwd=folder, env=env,
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace",
+                            start_new_session=not windows)
 
     def pump():
         for line in proc.stdout:
@@ -62,7 +65,14 @@ def check(layer):
             break
         time.sleep(1)
     time.sleep(2)
-    subprocess.run(["taskkill", "/T", "/F", "/PID", str(proc.pid)], capture_output=True)
+    if windows:
+        subprocess.run(["taskkill", "/T", "/F", "/PID", str(proc.pid)], capture_output=True)
+    else:
+        import signal
+        try:
+            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+        except ProcessLookupError:
+            pass
     t.join(timeout=5)
     out = "\n".join(log)
     (run / "server_check.log").write_text(out, encoding="utf-8")

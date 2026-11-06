@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: How Barely Pipes works and what it covers
+    url: https://itmecasey.com/wiki/barelypipes/
+    about: Every pipe, its tiers and recipes, face modes, upgrades and the tools. Read this first.
+  - name: Troubleshooting
+    url: https://itmecasey.com/wiki/barelypipes/?p=troubleshooting
+    about: A pipe that will not connect, nothing moving, and mixed-mod setups.

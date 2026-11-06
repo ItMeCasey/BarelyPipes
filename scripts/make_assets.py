@@ -149,6 +149,10 @@ def conditional(data, loader, fam, modid):
         data = {"neoforge:conditions": [{"type": "neoforge:mod_loaded", "modid": modid}], **data}
     elif loader == "neoforge":
         data = {"conditions": [{"type": "forge:mod_loaded", "modid": modid}], **data}
+    elif fam == "26":
+        # Forge 26.x wraps a conditional recipe in a forge:conditional entry.
+        data = {"type": "forge:conditional", "forge:condition": {"type": "forge:mod_loaded", "modid": modid},
+                "recipes": [{"recipe": data}]}
     else:
         data = {"conditions": [{"type": "forge:mod_loaded", "modid": modid}], **data}
     return data
@@ -222,7 +226,7 @@ def main(mc, loader):
     gdir = os.path.join(assets, "textures", "gui", "glyph")
     os.makedirs(gdir, exist_ok=True)
     for g in os.listdir(os.path.join(afres, "textures", "gui", "glyph")):
-        if g.startswith(("flux_", "sky_", "weather", "ticks", "action_")):
+        if g.startswith(("flux_", "sky_", "weather")):
             continue
         shutil.copyfile(os.path.join(afres, "textures", "gui", "glyph", g), os.path.join(gdir, g))
     shutil.copyfile(os.path.join(TEMPLATE, "glyphs", "storage.png"), os.path.join(gdir, "storage.png"))
@@ -236,6 +240,10 @@ def main(mc, loader):
     bs = open(os.path.join(afres, "blockstates", "conduit_bundle.json"), encoding="utf-8").read().replace("aeroflux", MODID)
     os.makedirs(os.path.join(mod_assets, "blockstates"), exist_ok=True)
     open(os.path.join(mod_assets, "blockstates", "conduit_bundle.json"), "w", encoding="utf-8", newline="\n").write(bs)
+    if fam != "26" or loader == "forge":
+        # Geometry-loader builds (Forge 26.x, and every 1.20.1 and 1.21.1 build) load the bundle through a block model file.
+        write_json(os.path.join(mod_assets, "models", "block", "conduit_bundle.json"),
+                   {"loader": ref("conduit_bundle"), "textures": {"node": ref("block/pipe_node"), "particle": ref("block/pipe_node")}})
     # item models and definitions
     for pid, kind, tier in pipe_ids():
         write_json(os.path.join(assets, "models", "item", pid + ".json"), item_model(kind, tier))

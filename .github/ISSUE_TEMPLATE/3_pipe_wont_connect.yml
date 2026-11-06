@@ -1,0 +1,54 @@
+name: Pipe won't connect or won't move things
+description: A pipe does not join a neighbor, or items, fluid, energy, gas or redstone do not move the way you expect.
+title: "[Pipe] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Look at the pipe with the Conduit Tool in inspect mode: it reports the network size, its sources and destinations and its speed.
+        Please include that line, which kind of pipe and tier it is, and what is on the other side (machine, chest, tank, another mod's block).
+  - type: dropdown
+    id: pipe
+    attributes:
+      label: Which pipe
+      options: [Item, Fluid, Energy, Gas, Redstone, ME, Dense ME, Storage]
+    validations:
+      required: true
+  - type: textarea
+    id: setup
+    attributes:
+      label: What it connects, and the face modes
+      description: Which blocks are at each end, and the mode of each face (Open, Import, Export, Off, Blocked). A screenshot helps.
+    validations:
+      required: true
+  - type: textarea
+    id: inspect
+    attributes:
+      label: What the Conduit Tool says in inspect mode
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Barely Pipes version
+    validations:
+      required: true
+  - type: input
+    id: minecraft
+    attributes:
+      label: Minecraft and loader versions
+      placeholder: Minecraft 26.1.2, NeoForge ...
+    validations:
+      required: true
+  - type: textarea
+    id: mods
+    attributes:
+      label: Other mods
+      description: Especially the machines or storage mods on the pipe's ends (BarelyStorage, AE2).

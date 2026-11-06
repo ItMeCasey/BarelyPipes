@@ -1,0 +1,38 @@
+name: Feature request
+description: An idea for something Barely Pipes could do.
+title: "[Idea] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      placeholder: A pipe that carries chemicals from another mod.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it help?
+      description: What you're trying to do in game, and what you do now instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: What part of Barely Pipes is it about?
+      options:
+        - A new kind of pipe
+        - How an existing pipe moves things (tiers, modes, upgrades)
+        - The tools (Pipe Wrench, Conduit Tool)
+        - Recipes and balance
+        - Settings and config
+        - Compatibility with another mod
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Sketch or example
+      description: A mockup, a screenshot from another mod, or a short description of how it would work.

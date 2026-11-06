@@ -1,0 +1,68 @@
+name: Bug report
+description: Something in Barely Pipes doesn't work the way it should.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. If the game crashed, use **Crash report** instead.
+        If a pipe will not connect or will not move things, use **Pipe won't connect**.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you saw, and what you expected to see.
+      placeholder: My item pipe does not pull from the chest.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Place an item pipe bundle next to a chest
+        2. Use the Pipe Wrench on the chest side
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Barely Pipes version
+      description: From the jar's file name or the mod list.
+    validations:
+      required: true
+  - type: input
+    id: minecraft
+    attributes:
+      label: Minecraft and loader versions
+      placeholder: Minecraft 1.21.1, NeoForge ...
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where is Barely Pipes installed?
+      options:
+        - Single player
+        - Dedicated server
+    validations:
+      required: true
+  - type: textarea
+    id: mods
+    attributes:
+      label: Other mods
+      description: The mods in your instance, or a link to your modpack. Leave empty if it happens with Barely Pipes alone.
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshots or video
+      description: Drag images or a short clip in here.
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: |
+        `logs/latest.log` from your Minecraft folder. For a long log, upload it to https://mclo.gs or a GitHub gist and paste the link.
+      render: text
