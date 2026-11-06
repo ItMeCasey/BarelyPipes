@@ -1,0 +1,53 @@
+# Barely Pipes design notes
+
+Barely Pipes is the pipe bundle of AeroFlux as a standalone mod. Seven pipes share one block (the bundle): fluid, item,
+redstone, energy, gas, ME (AE2) and storage (BarelyStorage). Dense ME replaces ME in the ME lane.
+
+## Bundle lanes
+
+A bundle has one lane per network type: fluid 0, item 1, redstone 2, energy 3, gas 4, ME or dense ME 5, storage 6.
+AeroFlux had six lanes; the storage pipe is the seventh. `ConduitLayout` already spreads pipes over a face in a
+grid of up to nine spots, so seven pipes fit without a new layout. Packing changed to fit seven lanes: the pipe set key
+uses 4 bits per lane, tiers 2 bits per lane.
+
+## Tiers
+
+Three tiers, matching the generated textures (`_t1`, `_t2`, `_t3`): iron (light gray, `#C8C8C8`), gold (`#CFA000`),
+diamond (`#2A8FB5`). They use AeroFlux's iron, gold and diamond numbers (its copper, netherite and fluxium tiers are gone):
+
+| | iron | gold | diamond |
+|---|---|---|---|
+| fluid, mB per tick | 250 | 650 | 1,800 |
+| energy, FE per tick | 4,000 | 16,000 | 64,000 |
+| gas, mB per tick | 800 | 2,400 | 7,000 |
+| items per operation | 4 | 8 | 16 |
+| ticks between operations | 16 | 12 | 8 |
+
+Only fluid, item, energy and gas pipes have tiers. Redstone, ME, dense ME and storage pipes have one set of textures.
+Every tiered pipe has three upgrade slots (speed and capacity). Redstone carries one channel (AeroFlux only ever wired up
+channel 0). The storage pipe runs at the gold item pipe's rate (`PipeTiers.STORAGE_TIER`) and takes no speed or capacity
+upgrades, but it takes Filter and Priority upgrades per face like every pipe.
+
+## Storage pipe
+
+BarelyStorage exposes no item capability: its racks, cables and nodes are linked through its own `NetNode` interface and
+`StorageNetwork`. The storage pipe therefore attaches to any block that is a BarelyStorage `NetNode` on that side, and
+also to ordinary inventories, so items can move network to inventory, inventory to network and network to network. A face
+on a network block gives any item the network holds (a Filter upgrade picks which) and takes whatever the racks have room
+for. `StorageMover` does the moving; `StorageLink` is the only class that names BarelyStorage, loaded only when
+BarelyStorage is installed.
+
+BarelyStorage only has 26.1.2, 26.2 and 26.3 builds, so on 1.20.1 and 1.21.1 the storage pipe item exists but has no recipe
+and joins inventories only (the same way AeroFlux's gas pipe waits for Mekanism).
+
+## Items
+
+Pipes (one item per pipe type and tier), Pipe Wrench (was Flux Wrench), Conduit Tool, Speed, Capacity, Filter and Priority
+Upgrades. Recipes use vanilla ingredients only (ME pipes are conditional on AE2).
+
+## Layout
+
+`common/` holds Minecraft-free code (`core/conduit`), the unit tests, and the resources every build shares (pipe textures,
+GUI glyphs, item models, lang). `<loader>-<mc>/` holds each build: the Minecraft code, the blockstate and the recipes.
+The loaders differ too much for a shared version layer (AeroFlux keeps all its modules separate for the same reason).
+`scripts/make_assets.py` writes the resources, `scripts/port_aeroflux.py` was the one-time seed from AeroFlux.
