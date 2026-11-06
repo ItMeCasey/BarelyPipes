@@ -40,9 +40,9 @@ public final class EndpointSettings {
 
     private final Endpoint[][] endpoints = new Endpoint[PipeType.LANES][FACES];
 
-    /** Whether a pipe type can take a Filter upgrade: only the pipes that carry items or fluid. */
+    /** Whether a pipe type can take a Filter upgrade: the pipes that carry items or fluid, and the storage pipe (which carries items). */
     public static boolean supportsFilter(PipeType type) {
-        return type == PipeType.ITEM || type == PipeType.FLUID;
+        return type == PipeType.ITEM || type == PipeType.FLUID || type == PipeType.STORAGE;
     }
 
     /** Whether a pipe type can take a Priority upgrade: every pipe that has destinations to rank. */

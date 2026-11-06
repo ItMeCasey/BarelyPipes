@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "T": "minecraft:diamond",
+    "C": "minecraft:redstone"
+  },
+  "pattern": [
+    "TTT",
+    "CCC",
+    "TTT"
+  ],
+  "result": {
+    "id": "barelypipes:diamond_energy_pipe",
+    "count": 6
+  }
+}

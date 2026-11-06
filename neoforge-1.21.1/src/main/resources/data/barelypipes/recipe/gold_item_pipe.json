@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "T": "minecraft:gold_ingot",
+    "C": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    "TTT",
+    "CCC",
+    "TTT"
+  ],
+  "result": {
+    "id": "barelypipes:gold_item_pipe",
+    "count": 6
+  }
+}

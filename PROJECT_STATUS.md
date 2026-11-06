@@ -23,6 +23,6 @@ Spend: none
 ## Release and docs
 - [ ] Packaged jar per Minecraft version (w:2)
 - [ ] CI (build.yml) and release workflow (w:3)
-- [ ] Branding, CurseForge description, README (w:3)
-- [ ] Wiki pages (w:3)
+- [x] Branding, CurseForge description, README (icon, banners, LISTING, DESCRIPTION, README and CHANGELOG written; Tested lines say what is verified only) (w:3)
+- [~] Wiki pages (18-page draft written and previewed locally with no missing links; not deployed, Tested and known-gaps pages to update after client checks) (w:3)
 - [ ] GitHub repository, CurseForge project, first release (w:2)

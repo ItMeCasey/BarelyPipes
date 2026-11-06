@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "I I",
+    " R ",
+    " I "
+  ],
+  "result": {
+    "id": "barelypipes:pipe_wrench",
+    "count": 1
+  }
+}

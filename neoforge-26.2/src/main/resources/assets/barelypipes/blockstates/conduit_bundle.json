@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "": {
+      "type": "barelypipes:conduit_bundle",
+      "textures": {
+        "node": "barelypipes:block/pipe_node",
+        "particle": "barelypipes:block/pipe_node"
+      }
+    }
+  }
+}

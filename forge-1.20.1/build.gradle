@@ -1,0 +1,117 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+base.archivesName = "${mod_id}-forge-mc${minecraft_version}"
+version = mod_version
+group = mod_group
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+// Shared code lives in ../common and is compiled into this loader layer and the combined jar.
+sourceSets {
+    test {
+        java.srcDir '../common/src/test/java'
+    }
+    main {
+        java.srcDir '../common/src/main/java'
+        resources.srcDir '../common/src/main/resources'
+    }
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            if (project.hasProperty('devTools')) { property 'barelypipes.dev', 'true' }
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+        client {}
+        server {
+            args '--nogui'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    // AE2 (Applied Energistics 2), compile-only, straight from Modrinth. Not exclusive: ForgeGradle serves the remapped copies of
+    // these jars from its own local repository under the same group, so that group must stay open to other repositories.
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // The ME pipes join AE2's grids when it is installed. Compile-only: nothing of AE2 ships.
+    compileOnly fg.deobf("maven.modrinth:ae2:${ae2_version}")
+}
+
+// Fills in mods.toml and pack.mcmeta from gradle.properties, the same way the NeoForge builds fill in neoforge.mods.toml.
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+        minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+        forge_version: forge_version, forge_version_range: forge_version_range, loader_version_range: loader_version_range,
+        mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+        mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'Specification-Title'     : mod_id,
+            'Specification-Vendor'    : mod_authors,
+            'Specification-Version'   : '1',
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : project.jar.archiveVersion,
+            'Implementation-Vendor'   : mod_authors,
+        ])
+    }
+    // 1.20.1 runs on SRG names, so the jar is remapped.
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Unit tests for the shared logic; they need no running game.
+dependencies {
+    testImplementation platform("org.junit:junit-bom:5.11.4")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+// Development tools (test tank, self test) live in src/dev folders and only build with -PdevTools, so a normal build and the
+// release jars never contain them. BarelyStorage has no build for this Minecraft version, so there is no storage self test.
+if (project.hasProperty('devTools')) {
+    sourceSets.main.java.srcDir 'src/dev/java'
+    sourceSets.main.resources.srcDir 'src/dev/resources'
+}

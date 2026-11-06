@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    }
+  },
+  "pattern": [
+    "IPI",
+    "PCP",
+    "IPI"
+  ],
+  "result": {
+    "item": "barelypipes:priority_upgrade",
+    "count": 1
+  }
+}

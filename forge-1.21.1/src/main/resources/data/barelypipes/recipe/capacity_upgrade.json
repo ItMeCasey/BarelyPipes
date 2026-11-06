@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": "minecraft:redstone",
+    "G": "minecraft:gold_ingot",
+    "C": "minecraft:chest"
+  },
+  "pattern": [
+    "RGR",
+    "RCR",
+    "RGR"
+  ],
+  "result": {
+    "id": "barelypipes:capacity_upgrade",
+    "count": 1
+  }
+}

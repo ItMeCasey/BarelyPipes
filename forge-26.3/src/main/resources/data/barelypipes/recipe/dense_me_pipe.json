@@ -1,0 +1,27 @@
+{
+  "type": "forge:conditional",
+  "forge:condition": {
+    "type": "forge:mod_loaded",
+    "modid": "ae2"
+  },
+  "recipes": [
+    {
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          "barelypipes:me_pipe",
+          "barelypipes:me_pipe",
+          "barelypipes:me_pipe",
+          "barelypipes:me_pipe",
+          "minecraft:glowstone_dust",
+          "minecraft:redstone"
+        ],
+        "result": {
+          "id": "barelypipes:dense_me_pipe",
+          "count": 1
+        }
+      }
+    }
+  ]
+}

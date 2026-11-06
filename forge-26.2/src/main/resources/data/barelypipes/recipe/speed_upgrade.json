@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": "minecraft:redstone",
+    "G": "minecraft:gold_ingot",
+    "Q": "minecraft:quartz"
+  },
+  "pattern": [
+    "RGR",
+    "RQR",
+    "RGR"
+  ],
+  "result": {
+    "id": "barelypipes:speed_upgrade",
+    "count": 1
+  }
+}

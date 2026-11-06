@@ -1,0 +1,111 @@
+plugins {
+    id 'idea'
+    id 'java-library'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.91'
+}
+
+version = mod_version
+group = mod_group
+
+base {
+    archivesName = "${mod_id}-neoforge-mc${minecraft_version}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+// Shared code lives in ../common and is compiled into this loader layer and the combined jar.
+sourceSets {
+    test {
+        java.srcDir '../common/src/test/java'
+    }
+    main {
+        java.srcDir '../common/src/main/java'
+        resources.srcDir '../common/src/main/resources'
+    }
+}
+
+repositories {
+    mavenLocal()
+    // AE2 (Applied Energistics 2), compile-only, straight from Modrinth.
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+}
+
+legacyForge {
+    // NeoForge's 1.20.1 fork of Forge 47 keeps the net.minecraftforge packages.
+    enable {
+        neoForgeVersion = project.minecraft_version + '-' + project.forge_version
+    }
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    runs {
+        configureEach {
+            gameDirectory = layout.projectDirectory.dir('run')
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            if (project.hasProperty('devTools')) { systemProperty 'barelypipes.dev', 'true' }
+        }
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// mods.toml and pack.mcmeta are templates: this fills in their ${} values from gradle.properties.
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+        minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+        forge_version: forge_version, forge_version_range: forge_version_range, loader_version_range: loader_version_range,
+        mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+        mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+legacyForge.ideSyncTask generateModMetadata
+
+// The ME pipes join AE2's grids when it is installed. Compile-only: nothing of AE2 ships.
+dependencies {
+    modCompileOnly "maven.modrinth:ae2:${ae2_version}"
+}
+
+// Unit tests for the shared logic; they need no running game.
+dependencies {
+    testImplementation platform("org.junit:junit-bom:5.11.4")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+// Development tools (test tank, self test) live in src/dev folders and only build with -PdevTools, so a normal build and the
+// release jars never contain them. BarelyStorage has no build for this Minecraft version, so there is no storage self test.
+if (project.hasProperty('devTools')) {
+    sourceSets.main.java.srcDir 'src/dev/java'
+    sourceSets.main.resources.srcDir 'src/dev/resources'
+}

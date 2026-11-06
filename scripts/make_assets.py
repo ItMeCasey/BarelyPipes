@@ -266,8 +266,9 @@ def main(mc, loader):
         if name == "storage_pipe" and fam in ("1.20.1", "1.21.1"):
             continue  # BarelyStorage has no build for these Minecraft versions: the pipe stays uncraftable
         write_json(os.path.join(rdir, name + ".json"), body)
-    for name, body in ae_recipes(fam).items():
-        write_json(os.path.join(rdir, name + ".json"), conditional(body, loader, fam, "ae2"))
+    if not (loader == "forge" and mc == "1.21.1"):  # AE2 has no Forge build for 1.21.1, so its ME pipes get no recipe there
+        for name, body in ae_recipes(fam).items():
+            write_json(os.path.join(rdir, name + ".json"), conditional(body, loader, fam, "ae2"))
     print("assets written for", mod)
 
 

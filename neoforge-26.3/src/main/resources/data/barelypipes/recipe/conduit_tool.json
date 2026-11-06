@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "D": "minecraft:diamond"
+  },
+  "pattern": [
+    "I I",
+    " D ",
+    " I "
+  ],
+  "result": {
+    "id": "barelypipes:conduit_tool",
+    "count": 1
+  }
+}
