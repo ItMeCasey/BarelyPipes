@@ -2,7 +2,7 @@
 
 ## 2026.11.2
 
-- Show Me What This Is (NeoForge 26.3 so far): the overlay now names the exact pipe you look at, such as Gold Item Pipe, Diamond Energy Pipe or Storage Pipe, with that pipe's item as the icon, instead of "Pipe Bundle". Detail lines give the side and whether you are on an arm, the core or a plug, the mode, what the side connects to, the throughput, Speed and Capacity upgrades, Filter and Priority; the core also lists the other pipes of the bundle.
+- Show Me What This Is (all ten builds): the overlay now names the exact pipe you look at, such as Gold Item Pipe, Diamond Energy Pipe or Storage Pipe, with that pipe's item as the icon, instead of "Pipe Bundle". Detail lines give the side and whether you are on an arm, the core or a plug, the mode, what the side connects to, the throughput, Speed and Capacity upgrades, Filter and Priority; the core also lists the other pipes of the bundle.
 - Fixed: the side names (Down, Up, North, South, West, East) were missing from the language file, so the Pipe Wrench and Conduit Tool messages showed raw keys.
 - Fixed: the outline and collision of pipes, plugs and the bundle now match what is drawn (arms were drawn 2 pixels wide but outlined 3), and a click on a plug, an arm or the plate beside a plug picks that pipe and face. The Pipe Wrench and Conduit Tool act on the face the arm or plug points to, not on the side of it you happened to click.
 - Fixed: the Gas Pipe's plug glyph was nearly invisible (gold and iron on a yellow field); it now sits on a dark field like the Item Pipe's. The Storage glyph in the pipe screen was off-white and half a pixel off center; it is now a centered white 13 by 13 picture.

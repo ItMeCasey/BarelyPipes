@@ -24,7 +24,7 @@ Optional mods unlock their pipes:
 - **BarelyStorage** (Minecraft 26.1.2, 26.2 and 26.3 only): the Storage Pipe joins its racks, cables and nodes. It has no recipe on 1.20.1 and 1.21.1, where it can only join ordinary inventories.
 - **Applied Energistics 2:** the ME Pipe and Dense ME Pipe join AE2 grids (their recipes load only with AE2).
 - **Mekanism** (Minecraft 1.20.1 on Forge and NeoForge, and 1.21.1 on NeoForge only): the Gas Pipe carries Mekanism gases and chemicals between tanks and machines. Mekanism has no build for 1.21.1 Forge, 26.1.2, 26.2 or 26.3, so on those seven builds the Gas Pipe item exists and its recipe loads, but it is inert and connects to nothing.
-- **Show Me What This Is** (our own look-at overlay; so far on the NeoForge 26.3 build): looking at a pipe shows exactly which pipe it is, such as Gold Item Pipe or Diamond Energy Pipe, as the overlay's title and icon, with the side, whether you are looking at an arm, the core or a plug, the mode, what it connects to, its throughput, upgrades, Filter and Priority. On the core it also lists the other pipes in the bundle.
+- **Show Me What This Is** (our own look-at overlay; in all ten builds): looking at a pipe shows exactly which pipe it is, such as Gold Item Pipe or Diamond Energy Pipe, as the overlay's title and icon, with the side, whether you are looking at an arm, the core or a plug, the mode, what it connects to, its throughput, upgrades, Filter and Priority. On the core it also lists the other pipes in the bundle.
 
 ## Features
 
@@ -62,12 +62,13 @@ Every build has these two options. Tier rates are built in and not configurable 
 
 ## What was checked
 
-- Shared pipe logic (`common/`): 98 unit tests, passing in every module.
-- All ten builds compile and pass the headless server self test (219 checks on 26.x: item, fluid, energy and redstone transfer, tool actions, the pipe screen's server side, and on 26.x the Storage Pipe against a real BarelyStorage rack, both directions; 213 checks on 1.20.1 and 1.21.1, 220 there with Mekanism installed, which adds the gas checks).
-- All ten builds ran a scripted client tour in a real game (2026-11-06) and the screenshots were read (`docs/frames/<module>/`): pipe models, tier colors, plates and plugs, the pipe screen and, on 26.x, the Storage Pipe next to a BarelyStorage rack. A few frames of Forge 26.1.2 and Forge 26.2 were not read.
+- Shared pipe logic (`common/`): 126 unit tests, passing in every module.
+- All ten builds compile and pass the headless server self test (228 checks on 26.x: item, fluid, energy and redstone transfer, tool actions, the pipe screen's server side, the Show Me What This Is lines and the Storage Pipe against a real BarelyStorage rack, both directions; 222 checks on Forge 1.21.1 and on the 1.20.1 and NeoForge 1.21.1 builds without Mekanism, 229 where Mekanism is installed, which adds the gas checks).
+- All ten builds ran a scripted client tour in a real game for 2026.11.1 (2026-11-06) and the screenshots were read (`docs/frames/<module>/`): pipe models, tier colors, plates and plugs, the pipe screen and, on 26.x, the Storage Pipe next to a BarelyStorage rack. A few frames of Forge 26.1.2 and Forge 26.2 were not read.
 - The Gas Pipe was checked against real Mekanism tanks on the three builds that have Mekanism (Forge 1.20.1, NeoForge 1.20.1, NeoForge 1.21.1): in the headless self test 40,000 mB of hydrogen moves from one Mekanism chemical tank to another through three iron gas pipes, all of it arrives, and no tick moves more than 800 mB (7 more checks there, 220 in all; the same layers pass with Mekanism left out, 213 checks). The client tour on those three builds shows the yellow gas pipe joining two Mekanism tanks and the gas pipe screen. The tank models in those frames do not show their contents, so the transfer itself is proven by the self test numbers, not by a picture. Mekanism machines other than the chemical tank, the Priority Upgrade on a gas pipe against Mekanism, and Mekanism's other chemical kinds (infusion types, pigments, slurries on 1.21.1) were not tried.
+- The 2026.11.2 changes (outlines and clicks following the drawn boxes, plug arrows, centered glyphs, the exact-pipe overlay) were checked by unit tests and the headless self test on all ten builds, and looked at in client frames on NeoForge 26.1.2, 26.2, 26.3, Forge 26.1.2 and NeoForge 1.21.1 (docs/frames). The plug arrows are small from the tour camera, the outline frames were inconclusive, and the overlay was read in a client on NeoForge 26.1.2 and 26.3 only; Forge 1.20.1 tour frames were not read.
 - Not checked: multiplayer, long sessions, and ME pipes against real AE2 devices.
-- Not integrated yet: item viewers (BEI, REI, JEI, EMI) and Jade; Show Me What This Is so far only on NeoForge 26.3 (the exact-pipe lines are unit tested and checked in the headless self test, not yet seen in a client frame).
+- Not integrated yet: item viewers (BEI, REI, JEI, EMI) and Jade.
 
 ## Build and test
 

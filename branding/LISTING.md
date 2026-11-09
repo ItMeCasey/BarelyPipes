@@ -19,7 +19,7 @@ Everything needed to fill in the CurseForge project form. Files are in `branding
 | License | MIT |
 | Source | https://github.com/ItMeCasey/BarelyPipes |
 | Issues | https://github.com/ItMeCasey/BarelyPipes/issues |
-| Wiki | https://itmecasey.com/wiki/barelypipes/ (not deployed yet; the description already links it, deploy before the project goes live) |
+| Wiki | https://itmecasey.com/wiki/barelypipes/ (deployed) |
 
 ### Files per release
 
@@ -56,10 +56,8 @@ The CurseForge description is in [`curseforge/DESCRIPTION.md`](../curseforge/DES
 
 ## Checklist
 
-1. Push `branding/` to GitHub so the description images load.
-2. Create the CurseForge project with `icon_512.png` as the logo, record the project id above and in the upload script, and add the `CURSEFORGE_TOKEN`, `IMC_MAVEN_USER` and `IMC_MAVEN_PASSWORD` repository secrets.
-3. Set `banners/social.png` as the GitHub social preview.
-4. Deploy the wiki (`wiki/barelypipes`) so the description's wiki link works.
-5. **After the client checks, update the Tested line** in `curseforge/DESCRIPTION.md`, the "What was checked" section in `README.md` and the table on the wiki page `known-gaps`. These three are the only places that state what was verified.
-6. `icon/barelypipes_logo.png` is the mod list logo for the jar.
-7. No Modrinth upload (house rule): the listing is CurseForge only.
+Done (verified 2026-11-09): `branding/` is on GitHub; the CurseForge project exists (id 1787208) with ten beta files for 2026.11.2 (and ten for 2026.11.1); the repository has the `v2026.11.1` and `v2026.11.2` tags and GitHub prereleases with the ten jars; the wiki is deployed.
+
+Still to check by hand: the GitHub social preview (`banners/social.png`, web UI only) and that the CurseForge files have passed review.
+
+Rules: the Tested lines live in three places only (`curseforge/DESCRIPTION.md`, the "What was checked" section of `README.md` and the table on the wiki page `known-gaps`); update them together. `icon/barelypipes_logo.png` is the mod list logo for the jar. No Modrinth upload (house rule): the listing is CurseForge only.

@@ -1,6 +1,6 @@
 # Porting a Barely Pipes module
 
-`neoforge-26.1.2` is the finished reference build: it compiles, passes the 98 unit tests and passes the headless self test
+`neoforge-26.1.2` is the finished reference build: it compiles, passes the 126 unit tests and passes the headless self test
 (`python scripts/server_check.py neoforge-26.1.2` prints `SERVER PASS`, 219 checks including the storage pipe against a real
 BarelyStorage network). Every other module is the same mod on another loader or Minecraft version. Do the same steps for each.
 
