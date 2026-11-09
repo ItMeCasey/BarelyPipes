@@ -85,6 +85,22 @@ python scripts/server_check.py neoforge-26.1.2   # headless self test, prints SE
 
 Branding: `python branding/source/make_icon.py`, then `python branding/source/render_banners.py` (Pillow and Google Chrome).
 
+## Compatibility (item and recipe viewers)
+
+Barely Pipes ships no viewer plugins; the viewers read its items and shaped recipes natively.
+
+| Build | JEI | REI | EMI | BEI |
+|---|---|---|---|---|
+| NeoForge 26.2 | build exists; dev wiring done, not run | build exists (needs Architectury, Cloth Config); not run | no build exists | build exists; not run |
+| NeoForge 26.3 | build exists; dev wiring done, not run | build exists; not run | no build exists | build exists; not run |
+| Forge 26.1.2 | no build exists | no build exists | no build exists | build exists; not run |
+| Forge 26.2 | no build exists | no build exists | no build exists | build exists; not run |
+| Forge 26.3 | no build exists | no build exists | no build exists | build exists; not run |
+| Forge 1.21.1 | build exists; not run | no build exists | no build exists | build exists; not run |
+| NeoForge 26.1.2, NeoForge 1.21.1, NeoForge 1.20.1, Forge 1.20.1 | not checked | not checked | EMI exists for 1.20.1 Forge and 1.21.1 NeoForge only | not checked |
+
+Availability read from CurseForge on 2026-11-09. "Not run" means the dev client wiring exists and compiles (`python scripts/viewer_check.py <layer> <viewers>`) but no client was started, so no viewer list, icon or recipe view has been seen yet.
+
 ## Version
 
 `YYYY.M.n`, the same in every module's `gradle.properties`. Releases are tags `v<version>`.

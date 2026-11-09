@@ -119,7 +119,7 @@ repositories {
     }
 }
 
-def viewerFiles = [jei: 'jei-238222:9393325', bei: 'bei-1783910:9438915']
+def viewerFiles = [jei: 'jei-238222:9393325', bei: 'bei-1783910:9469405']
 if (project.hasProperty('viewers')) {
     dependencies {
         project.property('viewers').split(',').each { name -> runtimeOnly fg.deobf("curse.maven:${viewerFiles[name.trim()]}") }

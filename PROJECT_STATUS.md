@@ -25,7 +25,7 @@ Spend: none
 - [~] See-through top face under BarelyStorage racks, terminals and assembler: cause was missing noOcclusion in BarelyStorage; the BarelyStorage source now has it on those blocks, not confirmed in a client and not checked against a BarelyStorage release (w:2)
 
 ## Compatibility
-- [ ] Item and recipe viewer plugins: BEI, REI, JEI, EMI (not started; the pipes add items and recipes, so the standard asks for them) (w:4)
+- [~] Item and recipe viewer plugins: dev wiring (-Pviewers ids, ViewerTour, scripts/viewer_check.py) added and compiling for neoforge-26.2, neoforge-26.3, forge-26.1.2, forge-26.2, forge-26.3 and forge-1.21.1; NO viewer has been run in a client yet, so nothing is seen or verified; the other four layers are not done; missing builds recorded in README (w:4)
 - [ ] Jade and WTHIT in-world info (AeroFlux had them; not ported; Show Me What This Is is done) (w:2)
 
 ## Testing

@@ -103,3 +103,31 @@ dependencies {
 dependencies {
     compileOnly files('../libs/smwti-api-26.1.2.jar')
 }
+
+// --- Optional item and recipe viewers (dev only) ---
+// -Pviewers=jei,rei,architectury,cloth,bei adds those mods to the dev client (runtimeOnly: nothing ships and nothing is compiled against).
+// The ItMeCasey Maven mirror is used when its credentials are set; Cursemaven is the fallback.
+repositories {
+    def imcUser = System.getenv('IMC_MAVEN_USER') ?: project.findProperty('imcMavenUser')
+    def imcPass = System.getenv('IMC_MAVEN_PASSWORD') ?: project.findProperty('imcMavenPassword')
+    if (imcUser && imcPass) {
+        maven {
+            name = 'ItMeCasey mirror'
+            url = 'https://itmecasey.com/maven'
+            credentials { username = imcUser; password = imcPass }
+            content { includeGroup 'curse.maven' }
+        }
+    }
+    maven {
+        name = 'Cursemaven (fallback)'
+        url = 'https://cursemaven.com'
+        content { includeGroup 'curse.maven' }
+    }
+}
+
+def viewerFiles = [bei: 'bei-1783910:9469399']
+if (project.hasProperty('viewers')) {
+    dependencies {
+        project.property('viewers').split(',').each { name -> runtimeOnly "curse.maven:${viewerFiles[name.trim()]}" }
+    }
+}

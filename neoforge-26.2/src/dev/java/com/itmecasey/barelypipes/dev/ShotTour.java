@@ -130,7 +130,24 @@ public final class ShotTour {
 
     // --- The tour ----------------------------------------------------------------------------
 
+    /** The viewer check: a script of steps in the inventory screen (see ViewerTour), then quit. BARELYPIPES_SHOTS=viewers selects it. */
+    private static void planViewers() {
+        then(0, () -> {
+            player().getAbilities().flying = false;
+        });
+        ViewerTour.plan();
+        then(20, () -> {
+            LOGGER.info("BARELYPIPES-SHOTS DONE");
+            stage = Stage.DONE;
+            Minecraft.getInstance().stop();
+        });
+    }
+
     private static void planTour() {
+        if ("viewers".equals(System.getenv("BARELYPIPES_SHOTS"))) {
+            planViewers();
+            return;
+        }
         then(0, () -> {
             server("gamerule advance_time false", "gamerule advance_weather false", "gamerule spawn_mobs false",
                     "time set noon", "weather clear", "kill @e[type=!player]", "clear @p");
