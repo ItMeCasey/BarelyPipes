@@ -249,6 +249,7 @@ public final class ShotTour {
 
         planOutlines();
         planPlugArrows();
+        planCloseups();
 
         // BarelyStorage: a rack, a bus cable, a storage pipe and a chest.
         if (com.itmecasey.barelypipes.conduit.transfer.StorageLink.loaded()) {
@@ -275,38 +276,13 @@ public final class ShotTour {
             far.refreshConnections();
             entity.changed();
         }));
-        then(10, () -> onServer(srv -> {
-            BlockPos pos = new BlockPos(ox, ground, 0);
-            var state = srv.overworld().getBlockState(pos);
-            var shape = state.getShape(srv.overworld(), pos);
-            LOGGER.info("BARELYPIPES-SHOTS shape boxes (pixels): {}", shape.toAabbs().stream().map(b -> String.format(Locale.ROOT,
-                    "[%.2f %.2f %.2f %.2f %.2f %.2f]", b.minX * 16, b.minY * 16, b.minZ * 16, b.maxX * 16, b.maxY * 16, b.maxZ * 16)).toList());
-            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) srv.overworld().getBlockEntity(pos);
-            // Real vanilla rays through the shape, from the east, at y = fluid pipe row, at three depths.
-            double[][] aims = {{0.88, 0}, {0.66, 0}, {0.5, 0}};
-            String[] names = {"plug", "arm", "core"};
-            for (int i = 0; i < 3; i++) {
-                for (double y : new double[] {0.5 - 0.1875, 0.5 + 0.1875}) {
-                    Vec3 from = new Vec3(ox + 2.0, ground + y, aims[i][0]);
-                    Vec3 to = new Vec3(ox + 0.0, ground + y, aims[i][0]);
-                    var hit = shape.clip(from, to, pos);
-                    if (hit == null) {
-                        LOGGER.info("BARELYPIPES-SHOTS ray {} y={} misses", names[i], y);
-                        continue;
-                    }
-                    Vec3 local = hit.getLocation().subtract(ox, ground, 0).scale(16.0);
-                    LOGGER.info("BARELYPIPES-SHOTS ray {} y={} local=({}, {}, {}) -> {}", names[i], y, String.format(Locale.ROOT, "%.2f", local.x),
-                            String.format(Locale.ROOT, "%.2f", local.y), String.format(Locale.ROOT, "%.2f", local.z),
-                            com.itmecasey.barelypipes.conduit.config.PipeConfigActions.resolveTarget(entity.bundle(), local.x, local.y, local.z));
-                }
-            }
-        }));
-        // Plug: block z 12..16 is world z 0.75..1.0; arm: z 9.5..12; core: z 6.5..9.5.
-        then(4, () -> moveTo(new Vec3(ox + 1.2, ground + 0.75, 0.88), new Vec3(ox + 0.5, ground + 0.5, 0.88)));
+        then(10, () -> onServer(srv -> logShape(srv, new BlockPos(ox, ground, 0))));
+        // The camera looks along -x at the middle of each piece of the fluid pipe's south arm, so the crosshair is on it.
+        then(4, () -> aimSide(new BlockPos(ox, ground, 0), PipeType.FLUID, "plug"));
         shoot("outline_plug", 30);
-        then(2, () -> moveTo(new Vec3(ox + 1.2, ground + 0.75, 0.66), new Vec3(ox + 0.5, ground + 0.5, 0.66)));
+        then(2, () -> aimSide(new BlockPos(ox, ground, 0), PipeType.FLUID, "arm"));
         shoot("outline_arm", 6);
-        then(2, () -> moveTo(new Vec3(ox + 1.2, ground + 0.75, 0.5), new Vec3(ox + 0.5, ground + 0.5, 0.5)));
+        then(2, () -> aimSide(new BlockPos(ox, ground, 0), PipeType.FLUID, "core"));
         shoot("outline_core", 6);
         then(2, () -> moveTo(new Vec3(ox + 0.5, ground + 1.4, -0.9), new Vec3(ox + 0.5, ground + 0.5, 0.5)));
         shoot("outline_overview", 6);
@@ -337,6 +313,124 @@ public final class ShotTour {
             then(2, () -> moveTo(new Vec3(bx + 0.5 + 1.5, ground + 0.75, -0.15), new Vec3(bx + 0.5, ground + 0.5, 0.76)));
             shoot("plug_arrows_" + fluid[i].name().toLowerCase(Locale.ROOT) + "_right", 6);
         }
+    }
+
+    /** Logs what the client's real hit result is when a frame is taken, and which pipe piece it resolves to. */
+    private static void logHit(Minecraft minecraft, String name) {
+        if (!(minecraft.hitResult instanceof net.minecraft.world.phys.BlockHitResult hit)
+                || hit.getType() == net.minecraft.world.phys.HitResult.Type.MISS) {
+            LOGGER.info("BARELYPIPES-SHOTS {} crosshair target: {}", name, minecraft.hitResult == null ? "none" : minecraft.hitResult.getType());
+            return;
+        }
+        BlockPos pos = hit.getBlockPos();
+        String resolved = "";
+        if (minecraft.level.getBlockEntity(pos) instanceof ConduitBundleBlockEntity entity) {
+            Vec3 local = hit.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ()).scale(16.0);
+            resolved = " -> " + com.itmecasey.barelypipes.conduit.config.PipeConfigActions.resolveTarget(entity.bundle(), local.x, local.y, local.z);
+        }
+        LOGGER.info("BARELYPIPES-SHOTS {} crosshair target: {} {} at {}{}", name, minecraft.level.getBlockState(pos).getBlock(), pos,
+                hit.getLocation(), resolved);
+    }
+
+    private static void logShape(MinecraftServer srv, BlockPos pos) {
+        var shape = srv.overworld().getBlockState(pos).getShape(srv.overworld(), pos);
+        LOGGER.info("BARELYPIPES-SHOTS shape boxes at {} (pixels): {}", pos, shape.toAabbs().stream().map(b -> String.format(Locale.ROOT,
+                "[%.2f %.2f %.2f %.2f %.2f %.2f]", b.minX * 16, b.minY * 16, b.minZ * 16, b.maxX * 16, b.maxY * 16, b.maxZ * 16)).toList());
+    }
+
+    /** The box (block pixels) of a piece of one pipe on the south face: its plug, its arm or its core (or the junction). */
+    private static Box pieceBox(ConduitBundleBlockEntity entity, PipeType type, Face face, String what) {
+        ConduitLayout layout = ConduitLayout.of(entity.bundle());
+        return layout.pieces().stream().filter(p -> switch (what) {
+            case "plug" -> p.kind() == ConduitLayout.Kind.PLUG && p.type() == type && p.face() == face;
+            case "arm" -> p.kind() == ConduitLayout.Kind.ARM && p.type() == type && p.face() == face;
+            default -> (p.kind() == ConduitLayout.Kind.CORE && p.type() == type) || p.kind() == ConduitLayout.Kind.JUNCTION;
+        }).findFirst().orElseThrow().box();
+    }
+
+    private static Vec3 center(BlockPos pos, Box box) {
+        return new Vec3(pos.getX() + (box.minX() + box.maxX()) / 32.0, pos.getY() + (box.minY() + box.maxY()) / 32.0,
+                pos.getZ() + (box.minZ() + box.maxZ()) / 32.0);
+    }
+
+    /** Camera a block east of the piece, looking west along -x with the crosshair on the middle of the piece. */
+    private static void aimSide(BlockPos pos, PipeType type, String what) {
+        ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(pos);
+        Vec3 target = center(pos, pieceBox(entity, type, Face.SOUTH, what));
+        moveTo(target.add(1.0, 0.0, 0.0), target);
+    }
+
+    /**
+     * Camera close to a plug's glyph face (the face that looks into the bundle, toward -z for a south plug), 0.4 block in front
+     * of it and about {@code side} blocks off to the side of the pipe axis (0.55 is about 54 degrees), crosshair on the glyph.
+     */
+    private static void aimPlugClose(BlockPos pos, PipeType type, double side) {
+        ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(pos);
+        Box box = pieceBox(entity, type, Face.SOUTH, "plug");
+        Vec3 target = new Vec3(pos.getX() + (box.minX() + box.maxX()) / 32.0, pos.getY() + (box.minY() + box.maxY()) / 32.0,
+                pos.getZ() + box.minZ() / 16.0);
+        moveTo(target.add(side, 0.0, -0.4), target);
+    }
+
+    private record Closeup(String name, PipeType type, Tier tier, ConnectionMode mode, Block neighbor) {
+    }
+
+    /**
+     * Close-ups of each plug's glyph face with the crosshair on it (so the vanilla outline draws on that plug): the item pipe in
+     * all four modes next to a chest, then the fluid, energy, storage and redstone plugs. The gas plug needs Mekanism and is
+     * in the Mekanism builds' tour.
+     */
+    private static void planCloseups() {
+        Closeup[] specs = {
+                new Closeup("item_import", PipeType.ITEM, Tier.IRON, ConnectionMode.IMPORT, Blocks.CHEST),
+                new Closeup("item_export", PipeType.ITEM, Tier.GOLD, ConnectionMode.EXPORT, Blocks.CHEST),
+                new Closeup("item_open", PipeType.ITEM, Tier.DIAMOND, ConnectionMode.OPEN, Blocks.CHEST),
+                new Closeup("item_off", PipeType.ITEM, Tier.IRON, ConnectionMode.OFF, Blocks.CHEST),
+                new Closeup("fluid_import", PipeType.FLUID, Tier.GOLD, ConnectionMode.IMPORT, null),
+                new Closeup("energy_export", PipeType.ENERGY, Tier.DIAMOND, ConnectionMode.EXPORT, null),
+                new Closeup("storage_open", PipeType.STORAGE, Tier.IRON, ConnectionMode.OPEN, Blocks.CHEST),
+                new Closeup("redstone", PipeType.REDSTONE, Tier.IRON, ConnectionMode.OPEN, Blocks.REDSTONE_BLOCK),
+        };
+        int base = 48;
+        then(4, () -> onServer(srv -> {
+            for (int i = 0; i < specs.length; i++) {
+                int bx = base + i * 3;
+                Closeup spec = specs[i];
+                srv.overworld().setBlock(new BlockPos(bx, ground, 1), spec.neighbor() != null ? spec.neighbor().defaultBlockState()
+                        : DevHooks.TEST_TANK.get().defaultBlockState(), Block.UPDATE_ALL);
+                ConduitBundleBlockEntity entity = place(new BlockPos(bx, ground, 0));
+                entity.addPipe(spec.type(), spec.tier());
+                entity.refreshConnections();
+                entity.bundle().setMode(spec.type().lane(), Face.SOUTH, spec.mode());
+                entity.refreshConnections();
+                entity.changed();
+            }
+        }));
+        then(10, () -> onServer(srv -> logShape(srv, new BlockPos(base, ground, 0))));
+        for (int i = 0; i < specs.length; i++) {
+            BlockPos pos = new BlockPos(base + i * 3, ground, 0);
+            Closeup spec = specs[i];
+            then(4, () -> aimPlugClose(pos, spec.type(), 0.55));
+            shoot("closeup_" + spec.name(), i == 0 ? 30 : 8);
+            then(2, () -> aimPlugClose(pos, spec.type(), -0.55));
+            shoot("closeup_" + spec.name() + "_left", 8);
+        }
+        // The same plug seen from farther off, and the arm and the core with the crosshair on them (the outline should hug each).
+        BlockPos first = new BlockPos(base, ground, 0);
+        then(4, () -> aimPlugClose(first, PipeType.ITEM, 1.0));
+        shoot("closeup_item_import_far", 8);
+        then(4, () -> {
+            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(first);
+            Vec3 target = center(first, pieceBox(entity, PipeType.ITEM, Face.SOUTH, "arm"));
+            moveTo(target.add(0.45, 0.25, -0.1), target);
+        });
+        shoot("closeup_item_import_arm", 8);
+        then(4, () -> {
+            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(first);
+            Vec3 target = center(first, pieceBox(entity, PipeType.ITEM, Face.SOUTH, "core"));
+            moveTo(target.add(0.5, 0.3, -0.3), target);
+        });
+        shoot("closeup_item_import_core", 8);
     }
 
     private static void planStorage() {
@@ -424,6 +518,7 @@ public final class ShotTour {
             Minecraft minecraft = Minecraft.getInstance();
             LocalPlayer self = minecraft.player;
             LOGGER.info("BARELYPIPES-SHOTS {} eye={} pitch={} yaw={}", name, self.getEyePosition(), self.getXRot(), self.getYRot());
+            logHit(minecraft, name);
             Screenshot.grab(minecraft.gameDirectory, "barelypipes_" + name + ".png", minecraft.getMainRenderTarget(), 1,
                     message -> LOGGER.info("BARELYPIPES-SHOTS saved {}", name));
         });
