@@ -446,6 +446,26 @@ public final class ConduitLayout {
                 cell.centerX() + half, cell.centerY() + half, cell.centerZ() + half, 0.0, PLUG_DEPTH);
     }
 
+    /**
+     * The part of a plug's box that can be seen: the two plate layers sit over the plug's first pixel against the block face, so
+     * its side faces start {@code 2 * PLATE_LAYER} pixels in. An overlay on a plug side is laid over this part only, so none of
+     * it hides under the plate.
+     *
+     * @param plug the plug's box
+     * @param face the face the plug sits on
+     */
+    public static Box visiblePlug(Box plug, Face face) {
+        double cut = 2.0 * PLATE_LAYER;
+        return switch (face) {
+            case DOWN -> new Box(plug.minX(), plug.minY() + cut, plug.minZ(), plug.maxX(), plug.maxY(), plug.maxZ());
+            case UP -> new Box(plug.minX(), plug.minY(), plug.minZ(), plug.maxX(), plug.maxY() - cut, plug.maxZ());
+            case NORTH -> new Box(plug.minX(), plug.minY(), plug.minZ() + cut, plug.maxX(), plug.maxY(), plug.maxZ());
+            case SOUTH -> new Box(plug.minX(), plug.minY(), plug.minZ(), plug.maxX(), plug.maxY(), plug.maxZ() - cut);
+            case WEST -> new Box(plug.minX() + cut, plug.minY(), plug.minZ(), plug.maxX(), plug.maxY(), plug.maxZ());
+            case EAST -> new Box(plug.minX(), plug.minY(), plug.minZ(), plug.maxX() - cut, plug.maxY(), plug.maxZ());
+        };
+    }
+
     /** One layer of the plate: a centered square from {@code from} to one layer deeper. */
     private static Box plate(Face face, double size, double from) {
         double low = 8.0 - size / 2.0;

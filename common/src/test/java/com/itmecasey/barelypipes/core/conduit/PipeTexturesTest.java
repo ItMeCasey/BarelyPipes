@@ -91,4 +91,17 @@ class PipeTexturesTest {
         assertEquals(null, PipeTextures.plugOverlay(Face.SOUTH, Face.UP, ConnectionMode.OFF));
         assertEquals(null, PipeTextures.plugOverlay(Face.SOUTH, Face.NORTH, ConnectionMode.EXPORT));
     }
+
+    @Test
+    void overlaysSkipThePartOfThePlugUnderThePlate() {
+        // A south plug runs from z = 12 to the face at 16: its last pixel is under the two plate layers, so the overlay stops at 15.
+        Box south = ConduitLayout.visiblePlug(new Box(6.5, 6.5, 12, 9.5, 9.5, 16), Face.SOUTH);
+        assertEquals(12.0, south.minZ());
+        assertEquals(15.0, south.maxZ());
+        assertEquals(6.5, south.minX());
+        // A north plug runs from the face at 0 to 4: the overlay starts at 1.
+        assertEquals(1.0, ConduitLayout.visiblePlug(new Box(6.5, 6.5, 0, 9.5, 9.5, 4), Face.NORTH).minZ());
+        assertEquals(15.0, ConduitLayout.visiblePlug(new Box(6.5, 12, 6.5, 9.5, 16, 9.5), Face.UP).maxY());
+        assertEquals(1.0, ConduitLayout.visiblePlug(new Box(0, 6.5, 6.5, 4, 9.5, 9.5), Face.WEST).minX());
+    }
 }

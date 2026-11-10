@@ -200,7 +200,7 @@ public class BundleBakedModel implements DynamicBlockStateModel {
             // The four sides also carry arrows that point the way items, fluid or energy go (see PipeTextures#plugOverlay).
             String overlay = PipeTextures.plugOverlay(piece.face(), face, piece.mode());
             if (overlay != null) {
-                addOverlay(quads, box, direction, pipes.get(overlay));
+                addOverlay(quads, ConduitLayout.visiblePlug(box, piece.face()), direction, pipes.get(overlay));
             }
         }
     }
