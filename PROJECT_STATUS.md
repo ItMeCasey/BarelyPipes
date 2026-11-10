@@ -48,4 +48,4 @@ Spend: none
 - [x] Branding, CurseForge description, README, CHANGELOG and issue templates (w:3)
 - [x] Wiki: 18 pages deployed at itmecasey.com/wiki/barelypipes, redeployed 2026-11-10 with the newer wording (SMWTI on all ten builds, evidence on viewers, AE2, multiplayer and gas, jar names 2026.11.3; deployed by the PM); no screenshots on the pages yet (w:3)
 - [x] 2026.11.3 pushed, tagged v2026.11.3 and the release run succeeded (done by the PM, reported 2026-11-10; all ten modules are at 2026.11.3) (w:2)
-- [ ] 2026.11.4 pushed, CI green on all ten builds, tagged and uploaded, wiki redeployed (PM; all ten modules are at 2026.11.4 in gradle.properties; every jar changed because the shared texture list and the baked models changed) (w:2)
+- [x] 2026.11.4 pushed, CI green on all ten builds, tagged and uploaded, wiki redeployed (PM, 2026-11-10) (w:1)
