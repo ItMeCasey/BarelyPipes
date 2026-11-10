@@ -197,7 +197,32 @@ public class BundleBakedModel implements DynamicBlockStateModel {
                 material = pipe(type, tier, PipeTextures.vertical(piece.axis(), face) ? "plug_v" : "plug_h");
             }
             addFace(quads, box, direction, WHOLE, material);
+            // The four sides also carry arrows that point the way items, fluid or energy go (see PipeTextures#plugOverlay).
+            String overlay = PipeTextures.plugOverlay(piece.face(), face, piece.mode());
+            if (overlay != null) {
+                addOverlay(quads, box, direction, pipes.get(overlay));
+            }
         }
+    }
+
+    /** Lays a transparent texture over one face of a box, a hair above it so the two never fight for the same depth. */
+    private static void addOverlay(QuadCollection.Builder quads, Box box, Direction direction, BakedQuad.MaterialInfo material) {
+        if (material == null) {
+            return;
+        }
+        float lift = 0.04F;
+        Vector3f from = new Vector3f((float) box.minX(), (float) box.minY(), (float) box.minZ());
+        Vector3f to = new Vector3f((float) box.maxX(), (float) box.maxY(), (float) box.maxZ());
+        switch (direction) {
+            case UP -> to.y += lift;
+            case DOWN -> from.y -= lift;
+            case NORTH -> from.z -= lift;
+            case SOUTH -> to.z += lift;
+            case WEST -> from.x -= lift;
+            case EAST -> to.x += lift;
+        }
+        quads.addUnculledFace(FaceBakery.bakeQuad(NO_INTERNING, from, to, WHOLE, Quadrant.R0, material,
+                direction, BlockModelRotation.IDENTITY, null, ExtraFaceData.DEFAULT));
     }
 
     private BakedQuad.MaterialInfo pipe(PipeType type, Tier tier, String part) {

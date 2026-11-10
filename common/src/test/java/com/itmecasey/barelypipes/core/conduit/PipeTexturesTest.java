@@ -66,4 +66,29 @@ class PipeTexturesTest {
         assertArrayEquals(new float[] {0, 0, 16, 16}, PipeTextures.armUv(false, 10));
         assertArrayEquals(new float[] {0, 0, 16, 16}, PipeTextures.armUv(false, 12), "never more than the whole texture");
     }
+
+    @Test
+    void plugOverlaysPointTheWayThePipeGoes() {
+        // A south plug (neighbor toward +z): on top the texture's top is toward -z, so an export (toward +z) points down in the texture.
+        assertEquals("pipe_overlay_plug_down", PipeTextures.plugOverlay(Face.SOUTH, Face.UP, ConnectionMode.EXPORT));
+        assertEquals("pipe_overlay_plug_up", PipeTextures.plugOverlay(Face.SOUTH, Face.UP, ConnectionMode.IMPORT));
+        // Underneath the texture is turned the other way, so the same export points up.
+        assertEquals("pipe_overlay_plug_up", PipeTextures.plugOverlay(Face.SOUTH, Face.DOWN, ConnectionMode.EXPORT));
+        // On the west side the texture's right edge is toward +z, so an export points right; on the east side left.
+        assertEquals("pipe_overlay_plug_right", PipeTextures.plugOverlay(Face.SOUTH, Face.WEST, ConnectionMode.EXPORT));
+        assertEquals("pipe_overlay_plug_left", PipeTextures.plugOverlay(Face.SOUTH, Face.EAST, ConnectionMode.EXPORT));
+        // An up plug: every side's texture top is toward +y, so an export (up) points up.
+        for (Face side : List.of(Face.NORTH, Face.SOUTH, Face.EAST, Face.WEST)) {
+            assertEquals("pipe_overlay_plug_up", PipeTextures.plugOverlay(Face.UP, side, ConnectionMode.EXPORT));
+            assertEquals("pipe_overlay_plug_down", PipeTextures.plugOverlay(Face.UP, side, ConnectionMode.IMPORT));
+        }
+        // An east plug seen from the south: the right edge is toward +x, so an export points right; from the north it is turned.
+        assertEquals("pipe_overlay_plug_right", PipeTextures.plugOverlay(Face.EAST, Face.SOUTH, ConnectionMode.EXPORT));
+        assertEquals("pipe_overlay_plug_left", PipeTextures.plugOverlay(Face.EAST, Face.NORTH, ConnectionMode.EXPORT));
+        // Open shows both ways, along the height or the width; off and the plug's own end show nothing.
+        assertEquals("pipe_overlay_plug_both_v", PipeTextures.plugOverlay(Face.SOUTH, Face.UP, ConnectionMode.OPEN));
+        assertEquals("pipe_overlay_plug_both_h", PipeTextures.plugOverlay(Face.SOUTH, Face.WEST, ConnectionMode.OPEN));
+        assertEquals(null, PipeTextures.plugOverlay(Face.SOUTH, Face.UP, ConnectionMode.OFF));
+        assertEquals(null, PipeTextures.plugOverlay(Face.SOUTH, Face.NORTH, ConnectionMode.EXPORT));
+    }
 }

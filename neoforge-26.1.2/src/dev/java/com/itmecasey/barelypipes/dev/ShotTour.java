@@ -518,6 +518,42 @@ public final class ShotTour {
             });
             shoot(name, 6);
         }
+        // The arrow overlays on the plug's side faces: import (px), export (px + 3) and open (px + 6), seen from the east side and from above.
+        then(4, () -> onServer(srv -> {
+            BlockPos q = new BlockPos(px + 6, ground, 0);
+            if (srv.overworld().getBlockEntity(q) == null) {
+                srv.overworld().setBlock(new BlockPos(q.getX(), ground, 1), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+                ConduitBundleBlockEntity entity = place(q);
+                entity.addPipe(PipeType.ITEM, Tier.GOLD);
+                entity.refreshConnections();
+                entity.bundle().setMode(PipeType.ITEM.lane(), Face.SOUTH, ConnectionMode.OPEN);
+                entity.refreshConnections();
+                entity.changed();
+            }
+        }));
+        String[] sideModes = {"import", "export", "open"};
+        for (int k = 0; k < 3; k++) {
+            BlockPos q = new BlockPos(px + k * 3, ground, 0);
+            String mode = sideModes[k];
+            then(8, () -> {
+                ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(q);
+                Vec3 c = center(q, pieceBox(entity, PipeType.ITEM, Face.SOUTH, "plug"));
+                moveTo(c.add(0.55, 0.12, -0.12), c);
+            });
+            shoot("side_" + mode, 6);
+            then(4, () -> {
+                ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(q);
+                Vec3 c = center(q, pieceBox(entity, PipeType.ITEM, Face.SOUTH, "plug"));
+                moveTo(c.add(0.0, 0.6, -0.15), c);
+            });
+            shoot("top_" + mode, 6);
+            then(4, () -> {
+                ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(q);
+                Vec3 c = center(q, pieceBox(entity, PipeType.ITEM, Face.SOUTH, "plug"));
+                moveTo(c.add(0.0, 1.6, -1.8), c);
+            });
+            shoot("normal_" + mode, 6);
+        }
         then(20, () -> {
             LOGGER.info("BARELYPIPES-SHOTS DONE");
             stage = Stage.DONE;

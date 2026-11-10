@@ -37,7 +37,54 @@ public final class PipeTextures {
      */
     public static final List<String> PLUG_ARROW_FACES = List.of("plug_import", "plug_export", "plug_open");
 
+    /**
+     * The arrow overlays laid over the four side faces of a plug that imports, exports or is open: chevrons pointing up, down,
+     * left or right in the texture, and chevrons both ways along the texture's height or width. They are the same for every pipe.
+     */
+    public static final List<String> PLUG_OVERLAYS = List.of("pipe_overlay_plug_up", "pipe_overlay_plug_down", "pipe_overlay_plug_left",
+            "pipe_overlay_plug_right", "pipe_overlay_plug_both_v", "pipe_overlay_plug_both_h");
+
     private PipeTextures() {
+    }
+
+    /**
+     * The overlay texture for one side face of a plug, or {@code null} when the face takes none (the plug's own end, or a
+     * connection that is off). On a side face the plug's axis runs along the texture's height (V) or its width (H), the same
+     * split as {@link #vertical}; the chevrons point into the pipe for import, out of it for export and both ways when open.
+     *
+     * @param plugFace the face the plug sits on (its arm and neighbor are that way, the core the other)
+     * @param side one of the plug's four side faces
+     */
+    public static String plugOverlay(Face plugFace, Face side, ConnectionMode mode) {
+        if (mode != ConnectionMode.IMPORT && mode != ConnectionMode.EXPORT && mode != ConnectionMode.OPEN) {
+            return null;
+        }
+        int axis = ConduitLayout.axisOf(plugFace);
+        if (ConduitLayout.axisOf(side) == axis) {
+            return null;
+        }
+        boolean alongHeight = vertical(axis, side);
+        if (mode == ConnectionMode.OPEN) {
+            return alongHeight ? PLUG_OVERLAYS.get(4) : PLUG_OVERLAYS.get(5);
+        }
+        int outward = axis == 0 ? plugFace.stepX() : axis == 1 ? plugFace.stepY() : plugFace.stepZ();
+        int arrow = mode == ConnectionMode.EXPORT ? outward : -outward;
+        // Which way along the pipe axis the texture's top (V) or its right edge (H) points on this face (the default face UVs).
+        int towardTextureTop = switch (side) {
+            case UP -> -1;
+            case DOWN -> 1;
+            default -> 1;
+        };
+        int towardTextureRight = switch (side) {
+            case WEST -> 1;
+            case EAST -> -1;
+            case NORTH -> -1;
+            default -> 1;
+        };
+        if (alongHeight) {
+            return arrow == towardTextureTop ? PLUG_OVERLAYS.get(0) : PLUG_OVERLAYS.get(1);
+        }
+        return arrow == towardTextureRight ? PLUG_OVERLAYS.get(3) : PLUG_OVERLAYS.get(2);
     }
 
     /**
@@ -81,6 +128,7 @@ public final class PipeTextures {
                 }
             }
         }
+        names.addAll(PLUG_OVERLAYS);
         return names;
     }
 
