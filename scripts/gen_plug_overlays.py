@@ -18,17 +18,17 @@ EDGE = (20, 20, 24, 255)
 
 
 def arrow_cells(double):
-    """The filled cells of an arrow pointing up (head at the top), or of a two-headed one."""
+    """The filled cells of an arrow pointing up (head at the top), or of a two-headed one: heads 2, 4 and 6 wide, a 2 wide shaft."""
     cells = set()
-    top, bottom = 2, 13
-    for k in range(4):  # head: 2, 4, 6, 8 wide
+    top, bottom = 3, 12
+    for k in range(3):
         for x in range(7 - k, 9 + k):
             cells.add((x, top + k))
-    for y in range(top + 4, bottom + 1):  # shaft, 2 wide
+    for y in range(top + 3, bottom + 1):
         for x in (7, 8):
             cells.add((x, y))
     if double:
-        for k in range(4):
+        for k in range(3):
             for x in range(7 - k, 9 + k):
                 cells.add((x, bottom - k))
     return cells
