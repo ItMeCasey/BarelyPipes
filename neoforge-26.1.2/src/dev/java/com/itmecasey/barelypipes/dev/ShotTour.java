@@ -131,6 +131,10 @@ public final class ShotTour {
     // --- The tour ----------------------------------------------------------------------------
 
     private static void planTour() {
+        if ("rackplug".equals(System.getenv("BARELYPIPES_SHOTS"))) {
+            planRackPlug();
+            return;
+        }
         then(0, () -> {
             server("gamerule advance_time false", "gamerule advance_weather false", "gamerule spawn_mobs false",
                     "time set noon", "weather clear", "kill @e[type=!player]", "clear @p");
@@ -431,6 +435,94 @@ public final class ShotTour {
             moveTo(target.add(0.5, 0.3, -0.3), target);
         });
         shoot("closeup_item_import_core", 8);
+    }
+
+    /**
+     * The two open checks of the 2026.11.3 status: BarelyStorage's rack, terminals and assembler seen from above (their top faces must
+     * be drawn, not see-through), and a plug's glyph face seen straight on, from above its arm and from a small angle, close and far.
+     * BARELYPIPES_SHOTS=rackplug selects it.
+     */
+    private static void planRackPlug() {
+        then(0, () -> {
+            server("gamerule advance_time false", "gamerule advance_weather false", "gamerule spawn_mobs false",
+                    "time set noon", "weather clear", "kill @e[type=!player]", "clear @p");
+            player().getAbilities().flying = false;
+            Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+            Minecraft.getInstance().options.hideGui = false;
+            Minecraft.getInstance().options.guiScale().set(3);
+        });
+        int bx = 30;
+        then(4, () -> onServer(srv -> {
+            var level = srv.overworld();
+            String[] names = {"server_rack", "storage_terminal", "crafting_terminal", "assembler"};
+            for (int i = 0; i < names.length; i++) {
+                level.setBlock(new BlockPos(bx + i * 2, ground, 0), com.itmecasey.barelystorage.ModContent.blocks().get(names[i]).defaultBlockState(), Block.UPDATE_ALL);
+            }
+        }));
+        then(10, () -> moveTo(new Vec3(bx + 3.0, ground + 3.2, -2.6), new Vec3(bx + 3.0, ground + 1.0, 0.5)));
+        shoot("rack_tops_far", 30);
+        then(2, () -> moveTo(new Vec3(bx + 1.0, ground + 2.4, -1.6), new Vec3(bx + 1.0, ground + 1.0, 0.5)));
+        shoot("rack_tops_near", 6);
+
+        // The plug glyph face, item pipe in import mode next to a chest, south plug (glyph faces -z).
+        int px = 48;
+        then(4, () -> onServer(srv -> {
+            srv.overworld().setBlock(new BlockPos(px, ground, 1), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+            ConduitBundleBlockEntity entity = place(new BlockPos(px, ground, 0));
+            entity.addPipe(PipeType.ITEM, Tier.GOLD);
+            entity.refreshConnections();
+            entity.bundle().setMode(PipeType.ITEM.lane(), Face.SOUTH, ConnectionMode.IMPORT);
+            entity.refreshConnections();
+            entity.changed();
+        }));
+        BlockPos pos = new BlockPos(px, ground, 0);
+        double[][] views = {
+                // {camera dx from the glyph centre, dy, distance in front (-z), name index}
+                {0.0, 0.0, 0.45}, {0.0, 0.14, 0.45}, {0.0, 0.30, 0.45}, {0.0, 0.0, 1.0}, {0.12, 0.12, 0.30},
+        };
+        String[] viewNames = {"plug_axis_close", "plug_over_arm_close", "plug_above_close", "plug_axis_far", "plug_offset_near"};
+        for (int i = 0; i < views.length; i++) {
+            double[] v = views[i];
+            then(4, () -> {
+                ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(pos);
+                Box box = pieceBox(entity, PipeType.ITEM, Face.SOUTH, "plug");
+                Vec3 target = new Vec3(pos.getX() + (box.minX() + box.maxX()) / 32.0, pos.getY() + (box.minY() + box.maxY()) / 32.0,
+                        pos.getZ() + box.minZ() / 16.0);
+                moveTo(target.add(v[0], v[1], -v[2]), target);
+            });
+            shoot(viewNames[i], i == 0 ? 20 : 6);
+        }
+        // The same plug in export and open mode straight on.
+        then(4, () -> onServer(srv -> {
+            for (int k = 0; k < 2; k++) {
+                BlockPos q = new BlockPos(px + 3 + k * 3, ground, 0);
+                srv.overworld().setBlock(new BlockPos(q.getX(), ground, 1), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+                ConduitBundleBlockEntity entity = place(q);
+                entity.addPipe(PipeType.ITEM, Tier.GOLD);
+                entity.refreshConnections();
+                entity.bundle().setMode(PipeType.ITEM.lane(), Face.SOUTH, k == 0 ? ConnectionMode.EXPORT : ConnectionMode.OPEN);
+                entity.refreshConnections();
+                entity.changed();
+            }
+        }));
+        String[] modeNames = {"plug_export_over_arm", "plug_open_over_arm"};
+        for (int k = 0; k < 2; k++) {
+            BlockPos q = new BlockPos(px + 3 + k * 3, ground, 0);
+            String name = modeNames[k];
+            then(8, () -> {
+                ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) Minecraft.getInstance().level.getBlockEntity(q);
+                Box box = pieceBox(entity, PipeType.ITEM, Face.SOUTH, "plug");
+                Vec3 target = new Vec3(q.getX() + (box.minX() + box.maxX()) / 32.0, q.getY() + (box.minY() + box.maxY()) / 32.0,
+                        q.getZ() + box.minZ() / 16.0);
+                moveTo(target.add(0.0, 0.14, -0.45), target);
+            });
+            shoot(name, 6);
+        }
+        then(20, () -> {
+            LOGGER.info("BARELYPIPES-SHOTS DONE");
+            stage = Stage.DONE;
+            Minecraft.getInstance().stop();
+        });
     }
 
     private static void planStorage() {
