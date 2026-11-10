@@ -47,5 +47,4 @@ Spend: none
 - [x] CurseForge project 1787208 with ten beta files for 2026.11.2 and ten for 2026.11.1 (file list read through the API; review state not checked) (w:3)
 - [x] Branding, CurseForge description, README, CHANGELOG and issue templates (w:3)
 - [x] Wiki: 18 pages deployed at itmecasey.com/wiki/barelypipes, redeployed 2026-11-10 with the newer wording (SMWTI on all ten builds, evidence on viewers, AE2, multiplayer and gas, jar names 2026.11.3; deployed by the PM); no screenshots on the pages yet (w:3)
-- [ ] GitHub social preview image (banners/social.png; only the GitHub web settings page can set it: Casey) (w:1)
 - [x] 2026.11.3 pushed, tagged v2026.11.3 and the release run succeeded (done by the PM, reported 2026-11-10; all ten modules are at 2026.11.3) (w:2)
