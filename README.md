@@ -107,7 +107,7 @@ Availability read from CurseForge on 2026-11-09. "Not run" means no client was s
 
 ### In-world info
 
-Show Me What This Is names the exact pipe on all ten builds. **Jade** and **WTHIT** plugins show the same lines (pipe and tier, side and part, mode, connection, throughput, upgrades, distribution). WTHIT is in all ten builds, Jade in NeoForge 1.20.1, 1.21.1, 26.1.2, 26.2, 26.3 and Forge 1.20.1 (Jade has no other Forge builds). Seen in a real client: Jade on NeoForge 1.20.1, 1.21.1 and 26.1.2 and WTHIT on NeoForge 1.20.1, 1.21.1 and 26.1.2 (`docs/frames/viewers/`). Jade on Forge 1.20.1 and the Forge and 26.2, 26.3 builds compile the same code but were not started (Jade's own mixin fails in the Forge 1.20.1 dev environment).
+Show Me What This Is names the exact pipe on all ten builds. **Jade** and **WTHIT** plugins show the same lines (pipe and tier, side and part, mode, connection, throughput, upgrades, distribution). WTHIT is in all ten builds, Jade in NeoForge 1.20.1, 1.21.1, 26.1.2, 26.2, 26.3 and Forge 1.20.1 (Jade has no other Forge builds). Seen in a real client: Jade on NeoForge 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3, and on Forge 1.20.1 (a real Forge 47.4.28 install with the released jar; Jade's own mixin only fails in the ForgeGradle dev client), and WTHIT on NeoForge 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3 and on Forge 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3 (`docs/frames/viewers/`).
 
 ### ME pipes and AE2
 

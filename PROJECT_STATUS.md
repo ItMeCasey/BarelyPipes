@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-10
-Summary: Barely Pipes 2026.11.3 is released (tag v2026.11.3, release run green, wiki redeployed) with Jade and WTHIT plugins on all builds that have those mods; what is left is Jade and WTHIT on Forge 1.20.1 (the mods' own mixins fail in the dev client), a close look at the plug arrows, the BarelyStorage see-through fix in a client and the GitHub social preview.
+Summary: Barely Pipes 2026.11.3 is released (tag v2026.11.3, release run green, wiki redeployed) with Jade and WTHIT plugins checked in a client on every build that has those mods; what is left is a close look at the plug arrows, the BarelyStorage see-through fix in a client and the GitHub social preview.
 Spend: none
 
 ## Foundation
@@ -31,7 +31,7 @@ Spend: none
 - [x] Viewers on the remaining builds that have them, seen in a client: JEI recipe view on NeoForge 26.2, 26.3 and Forge 1.21.1; BEI recipe view on NeoForge 26.2, Forge 1.21.1, Forge 26.1.2 and Forge 26.2; REI recipe view on NeoForge 26.3 (frames docs/frames/viewers/<layer>/*rec*_recipe.png). BEI on NeoForge 26.3 and Forge 26.3 list all 23 pipe items and open BEI's detail page, but showed its 'Uses' page ('No recipes found') instead of the crafting recipe (w:1)
 - [x] Jade and WTHIT plugins show the exact pipe lines in a client: WTHIT on NeoForge 1.20.1 (WTHIT 8), 1.21.1 (12) and 26.1.2 (19); Jade on NeoForge 1.20.1 (Jade 11), 1.21.1 (15) and 26.1.2 (26) (frames docs/frames/viewers/<layer>/{jade,wthit}_outline_arm.png). Plugins and the Jade config name are in all builds that have the mods: WTHIT on all ten, Jade on NeoForge 1.20.1, 1.21.1, 26.1.2, 26.2, 26.3 and Forge 1.20.1 (Forge 1.21.1 and Forge 26.x have no Jade build) (w:3)
 - [x] Jade and WTHIT in a client on the other builds: Jade on NeoForge 26.2 and 26.3, WTHIT on NeoForge 26.2 and 26.3 and Forge 1.21.1, 26.1.2, 26.2 and 26.3 (frames docs/frames/viewers/<layer>/{jade,wthit}_outline_arm.png, pipe name, arm, mode, throughput lines shown) (w:2)
-- [~] Jade and WTHIT on Forge 1.20.1: both mods' own mixins fail to apply in the ForgeGradle dev client (WTHIT: EntityAccess finds no m_5677_ method; Jade: StringRenderOutputMixin), so no frame; the same plugin code and API (Jade 11, WTHIT 8) is shown working on NeoForge 1.20.1, and the jar passes verify_jars.py (w:1)
+- [x] Jade and WTHIT on Forge 1.20.1 in a real install (not the ForgeGradle dev client, where both mods' own mixins fail): the released barelypipes-forge-mc1.20.1-2026.11.3.jar (527 SRG names, verify_jars ok) plus Jade 11 or WTHIT 8.21.2 with Bad Packets in a real Forge 47.4.28 client; looking at an item pipe shows Pipe Bundle, Iron Item Pipe, Core of the pipe, Sides, Throughput, Upgrades, Distribution and the other pipe in the bundle in both (frames docs/frames/viewers/forge-1.20.1/{jade,wthit}_real_install_pipe.png; no mixin errors in the log) (w:1)
 
 ## Testing
 - [x] Headless self test on all ten builds, 0 failures (228 checks on 26.x; 222 on 1.20.1 and 1.21.1 builds, 229 where Mekanism is loaded; Forge 1.21.1 222) (w:4)
