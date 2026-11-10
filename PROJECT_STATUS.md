@@ -27,9 +27,10 @@ Spend: none
 
 ## Compatibility
 - [x] Item and recipe viewers on NeoForge 1.21.1: a search for 'pipe' lists every item in JEI, REI, EMI and BEI and the recipe view opens in all four (gold item pipe in JEI, redstone pipe in REI, iron fluid pipe in EMI and BEI; frames docs/frames/viewers/neoforge-1.21.1/*rec*), and REI's recipe view on NeoForge 26.2 (w:3)
-- [~] Viewers on the remaining builds (JEI and BEI on NeoForge 26.2 and 26.3, REI on 26.3, JEI on Forge 1.21.1, BEI on Forge 26.x): not run; the BEI 26.2 launch did not start twice because the launcher kept waiting for the shared client slot. These viewers need no plugin from us (w:1)
+- [x] n/a: no EMI build for NeoForge 26.x, Forge 1.21.1 or Forge 26.x; no REI build for Forge 1.21.1 or Forge 26.x; no JEI build for Forge 26.x; no AE2 build for Forge 1.21.1 or Forge 26.x; no Jade build for Forge 1.21.1 or Forge 26.x (w:1)
+- [~] Viewers on the builds that have them but were not started: JEI and BEI on NeoForge 26.2 and 26.3, REI on 26.3, JEI on Forge 1.21.1, BEI on Forge 1.21.1 and Forge 26.x (the BEI 26.2 launch waited twice for the shared client slot; these viewers need no plugin from us) (w:1)
 - [x] Jade and WTHIT plugins show the exact pipe lines in a client: WTHIT on NeoForge 1.20.1 (WTHIT 8), 1.21.1 (12) and 26.1.2 (19); Jade on NeoForge 1.20.1 (Jade 11), 1.21.1 (15) and 26.1.2 (26) (frames docs/frames/viewers/<layer>/{jade,wthit}_outline_arm.png). Plugins and the Jade config name are in all builds that have the mods: WTHIT on all ten, Jade on NeoForge 1.20.1, 1.21.1, 26.1.2, 26.2, 26.3 and Forge 1.20.1 (Forge 1.21.1 and Forge 26.x have no Jade build) (w:3)
-- [~] Jade and WTHIT on the builds not started in a client: the same code compiled on Forge 1.20.1, Forge 1.21.1 and Forge 26.3 and the jars are checked, but no client ran there (Jade's own mixin fails in the ForgeGradle 1.20.1 dev client, not ours); the other builds are compiled by CI (w:2)
+- [~] Jade and WTHIT in a client on the builds that have them but were not started: Jade on NeoForge 26.2, 26.3 and Forge 1.20.1 (its mixin fails in that dev client), WTHIT on the Forge builds and NeoForge 26.2, 26.3; the same code is compiled by CI (w:2)
 
 ## Testing
 - [x] Headless self test on all ten builds, 0 failures (228 checks on 26.x; 222 on 1.20.1 and 1.21.1 builds, 229 where Mekanism is loaded; Forge 1.21.1 222) (w:4)
