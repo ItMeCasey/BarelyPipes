@@ -63,7 +63,7 @@ def check(layer, mods, script, tag):
     env = {"BARELYPIPES_SHOTS": os.environ.get("VIEWER_SHOTS", "viewers"), "BARELYPIPES_VIEWER_SCRIPT": script}
     sets = "".join(f'set "{k}={v}"&& ' for k, v in env.items())
     command = sets + f".\\gradlew.bat runClient --no-daemon -q -PdevTools {"-Pviewers=" + mods if mods != "-" else ""} {os.environ.get("VIEWER_EXTRA", "")} -PwindowSize={WINDOW}"
-    subprocess.run(["powershell", "-NoProfile", "-File", ISOLATED, "-Run", "-Desktop", DESKTOP, "-WorkDir", str(folder), "-Command", command],
+    subprocess.run(["powershell", "-NoProfile", "-File", ISOLATED, "-Run", "-WaitMinutes", "60", "-Desktop", DESKTOP, "-WorkDir", str(folder), "-Command", command],
                    check=True, capture_output=True)
     began = time.time()
 
