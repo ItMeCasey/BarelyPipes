@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
@@ -53,6 +54,12 @@ public class BundleBakedModel implements IDynamicBakedModel {
         this.pipes = Map.copyOf(pipes);
         this.node = node;
         this.particle = particle;
+    }
+
+    /** The arrow overlays on the plugs have transparent pixels, so the bundle is drawn in the cutout layer (its other textures are solid). */
+    @Override
+    public ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
+        return ChunkRenderTypeSet.of(RenderType.cutout());
     }
 
     @Override
@@ -154,6 +161,11 @@ public class BundleBakedModel implements IDynamicBakedModel {
                 sprite = pipe(type, tier, PipeTextures.vertical(piece.axis(), face) ? "plug_v" : "plug_h");
             }
             quads.add(bake(box, direction, sprite, WHOLE));
+            // The four sides also carry arrows that point the way items, fluid or energy go (see PipeTextures#plugOverlay).
+            String overlay = PipeTextures.plugOverlay(piece.face(), face, piece.mode());
+            if (overlay != null) {
+                quads.add(bake(ConduitLayout.plugOverlayBox(box, piece.face(), face), direction, pipes.get(overlay), WHOLE));
+            }
         }
     }
 

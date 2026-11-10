@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.11.4
+
+- Changed: the import, export and open arrows now sit on the four sides of each plug, where you see them from normal angles, instead of in the margins of the plug's end face (which a pipe's own core hides when you look along it). One small outlined arrow points into the pipe for import and out toward the neighbor for export, and open has a head at each end. All ten builds; checked in a client on NeoForge 26.1.2 and NeoForge 1.21.1.
+- Checked, no change needed: BarelyStorage racks, terminals and the assembler draw their top faces with the released BarelyStorage 2026.11.3 (NeoForge 26.1.2); Jade and WTHIT show the pipe lines on every build that has them, including Forge 1.20.1 in a real Forge 47.4.28 install.
+
 ## 2026.11.3
 
 - New: Jade and WTHIT plugins show the exact pipe under the crosshair (type and tier, side and part, mode, connection, throughput, upgrades, distribution), the same lines as the Show Me What This Is overlay. WTHIT works on all ten builds; Jade on NeoForge 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3 and Forge 1.20.1 (Jade has no other Forge builds). Both are optional and add nothing when not installed.

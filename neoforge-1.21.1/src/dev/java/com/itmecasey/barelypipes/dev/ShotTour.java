@@ -146,6 +146,28 @@ public final class ShotTour {
             planViewers();
             return;
         }
+        if ("plugsides".equals(System.getenv("BARELYPIPES_SHOTS"))) {
+            // Only the plug arrow scenes, to see the arrow overlays on the plug sides (import, export, open, off).
+            then(0, () -> {
+                server("gamerule doDaylightCycle false", "gamerule doWeatherCycle false", "gamerule doMobSpawning false",
+                        "time set noon", "weather clear", "kill @e[type=!player]", "clear @p");
+                Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+                Minecraft.getInstance().options.hideGui = false;
+                Minecraft.getInstance().options.guiScale().set(3);
+            });
+            planPlugArrows();
+            for (int i = 0; i < 3; i++) {
+                int bx = 26 + i * 3;
+                then(4, () -> moveTo(new Vec3(bx + 0.5, ground + 1.2, 0.1), new Vec3(bx + 0.5, ground + 0.5, 0.76)));
+                shoot("plug_top_" + i, 6);
+            }
+            then(20, () -> {
+                LOGGER.info("BARELYPIPES-SHOTS DONE");
+                stage = Stage.DONE;
+                Minecraft.getInstance().stop();
+            });
+            return;
+        }
         then(0, () -> {
             server("gamerule doDaylightCycle false", "gamerule doWeatherCycle false", "gamerule doMobSpawning false",
                     "time set noon", "weather clear", "kill @e[type=!player]", "clear @p");

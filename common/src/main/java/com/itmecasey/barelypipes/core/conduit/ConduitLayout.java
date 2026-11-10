@@ -466,6 +466,23 @@ public final class ConduitLayout {
         };
     }
 
+    /**
+     * The box of the arrow overlay on one side face of a plug: the {@link #visiblePlug visible part} of the plug, a hair taller
+     * toward {@code side} so the overlay lies just above the plug's own face and the two never fight for the same depth.
+     */
+    public static Box plugOverlayBox(Box plug, Face plugFace, Face side) {
+        Box v = visiblePlug(plug, plugFace);
+        double lift = 0.04;
+        return switch (side) {
+            case DOWN -> new Box(v.minX(), v.minY() - lift, v.minZ(), v.maxX(), v.maxY(), v.maxZ());
+            case UP -> new Box(v.minX(), v.minY(), v.minZ(), v.maxX(), v.maxY() + lift, v.maxZ());
+            case NORTH -> new Box(v.minX(), v.minY(), v.minZ() - lift, v.maxX(), v.maxY(), v.maxZ());
+            case SOUTH -> new Box(v.minX(), v.minY(), v.minZ(), v.maxX(), v.maxY(), v.maxZ() + lift);
+            case WEST -> new Box(v.minX() - lift, v.minY(), v.minZ(), v.maxX(), v.maxY(), v.maxZ());
+            case EAST -> new Box(v.minX(), v.minY(), v.minZ(), v.maxX() + lift, v.maxY(), v.maxZ());
+        };
+    }
+
     /** One layer of the plate: a centered square from {@code from} to one layer deeper. */
     private static Box plate(Face face, double size, double from) {
         double low = 8.0 - size / 2.0;

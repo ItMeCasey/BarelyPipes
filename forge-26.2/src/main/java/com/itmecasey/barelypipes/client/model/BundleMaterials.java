@@ -42,6 +42,11 @@ final class BundleMaterials {
         return pipes.get(PipeTextures.name(type, tier, part));
     }
 
+    /** A texture by its full name, such as {@code pipe_overlay_plug_up}. */
+    BakedQuad.MaterialInfo named(String name) {
+        return pipes.get(name);
+    }
+
     BakedQuad.MaterialInfo node() {
         return node;
     }

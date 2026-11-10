@@ -202,6 +202,11 @@ public final class BundleBlockStateModel implements BlockStateModel {
                 material = materials.pipe(type, tier, PipeTextures.vertical(piece.axis(), face) ? "plug_v" : "plug_h");
             }
             addFace(quads, box, WHOLE, direction, material);
+            // The four sides also carry arrows that point the way items, fluid or energy go (see PipeTextures#plugOverlay).
+            String overlay = PipeTextures.plugOverlay(piece.face(), face, piece.mode());
+            if (overlay != null) {
+                addFace(quads, ConduitLayout.plugOverlayBox(box, piece.face(), face), WHOLE, direction, materials.named(overlay));
+            }
         }
     }
 

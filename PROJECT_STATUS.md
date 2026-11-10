@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-10
-Summary: Barely Pipes 2026.11.3 is released (tag v2026.11.3, release run green, wiki redeployed) with Jade and WTHIT plugins checked in a client on every build that has those mods; what is left is a close look at the plug arrows, the BarelyStorage see-through fix in a client and the GitHub social preview.
+Summary: Barely Pipes 2026.11.4 is built and checked locally (plug arrows moved onto the plug sides on all ten builds, Jade and WTHIT and the rack top faces checked) but not yet pushed, tagged or released; 2026.11.3 is the released version; what is left is the 2026.11.4 release itself and the wiki redeploy.
 Spend: none
 
 ## Foundation
@@ -21,7 +21,7 @@ Spend: none
 
 ## 2026.11.2 fixes (from Casey's play test)
 - [x] Outline, collision and clicks follow the drawn pipe boxes (ConduitLayout.pick, unit tests, all ten builds) (w:3)
-- [~] Plug arrows for import, export and open and a readable gas plug glyph, centered storage and pipe screen glyphs (all ten builds, unit tests and self test; close-up frames on NeoForge 26.1.2 at 0.4 block and 54 degrees show the chevrons at the plug's glyph face edge and the vanilla outline hugging the arm (docs/frames/neoforge-26.1.2/closeup_*), but the glyph face is only visible at grazing angles and the direction of the chevrons is not readable by eye, so the arrows stay unproven as a readable direction hint; straight-on frames along the pipe axis on 2026-11-10 (docs/frames/viewers/neoforge-26.1.2/rackplug_plug_*.png) show only the pipe core, which hides the glyph face, so a player cannot read the arrows head-on; Casey's idea is to put the arrows on the plug's side faces, which are visible from normal angles: built as overlays on NeoForge 26.1.2 only so far: six shared overlay textures, one small outlined arrow (a head at each end for open) (scripts/gen_plug_overlays.py) laid over the plug's four side faces by PipeTextures.plugOverlay (unit tested) and BundleBakedModel.addPlug; frames docs/frames/viewers/neoforge-26.1.2/overlay_{side,top,normal}_{import,export,open}.png show the arrow pointing into the pipe for import, out toward the neighbor for export and two-headed for open, readable from about two blocks; the baked model of the other nine builds does not draw them yet, a 2026.11.4 change) (w:3)
+- [x] Plug arrows for import, export and open on the plug's four sides, one small outlined arrow (into the pipe for import, out for export, a head at each end for open) laid over the plug past the plate layers, with a readable direction from normal angles: six shared overlay textures (scripts/gen_plug_overlays.py), PipeTextures.plugOverlay and ConduitLayout.plugOverlayBox (unit tested), drawn by the baked model of all ten builds (the four 1.20.1 and 1.21.1 builds draw the bundle in the cutout layer for the transparent pixels); seen in a client on NeoForge 26.1.2 (docs/frames/viewers/neoforge-26.1.2/overlay_{side,top,normal}_*.png) and NeoForge 1.21.1 (plugsides_*.png); the other eight builds compile the same logic (w:3)
 - [x] Show Me What This Is names the exact pipe, tier and details on all ten builds (headless self test lines; overlay read in a client on NeoForge 26.1.2 and 26.3 only) (w:3)
 - [x] See-through top face under BarelyStorage racks, terminals and assembler: cause was missing noOcclusion in BarelyStorage; with the released BarelyStorage 2026.11.3 jar and Barely Pipes in a NeoForge 26.1.2 client the top faces of the server rack, storage terminal, crafting terminal and assembler are all drawn solid when seen from above (frames docs/frames/viewers/neoforge-26.1.2/rackplug_rack_tops_near.png and rackplug_rack_tops_far.png) (w:2)
 
@@ -48,3 +48,4 @@ Spend: none
 - [x] Branding, CurseForge description, README, CHANGELOG and issue templates (w:3)
 - [x] Wiki: 18 pages deployed at itmecasey.com/wiki/barelypipes, redeployed 2026-11-10 with the newer wording (SMWTI on all ten builds, evidence on viewers, AE2, multiplayer and gas, jar names 2026.11.3; deployed by the PM); no screenshots on the pages yet (w:3)
 - [x] 2026.11.3 pushed, tagged v2026.11.3 and the release run succeeded (done by the PM, reported 2026-11-10; all ten modules are at 2026.11.3) (w:2)
+- [ ] 2026.11.4 pushed, CI green on all ten builds, tagged and uploaded, wiki redeployed (PM; all ten modules are at 2026.11.4 in gradle.properties; every jar changed because the shared texture list and the baked models changed) (w:2)

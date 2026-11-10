@@ -6,12 +6,12 @@ Docs and recipes: https://itmecasey.com/wiki/barelypipes/ (once published). List
 
 ## Versions and jars
 
-Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3, on Forge and NeoForge (ten builds). Release version `2026.11.3`.
+Minecraft 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3, on Forge and NeoForge (ten builds). Release version `2026.11.4`.
 
 | Minecraft | Jar | Loader |
 |---|---|---|
-| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-forge-mc<mc>-2026.11.3.jar` | Forge |
-| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-neoforge-mc<mc>-2026.11.3.jar` | NeoForge |
+| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-forge-mc<mc>-2026.11.4.jar` | Forge |
+| 26.3, 26.2, 26.1.2, 1.21.1, 1.20.1 | `barelypipes-neoforge-mc<mc>-2026.11.4.jar` | NeoForge |
 
 There is no combined jar: Forge and NeoForge builds of the same Minecraft version use the same class names with different code, so each release file is built for one loader and one Minecraft version.
 
@@ -66,7 +66,7 @@ Every build has these two options. Tier rates are built in and not configurable 
 - All ten builds compile and pass the headless server self test (228 checks on 26.x: item, fluid, energy and redstone transfer, tool actions, the pipe screen's server side, the Show Me What This Is lines and the Storage Pipe against a real BarelyStorage rack, both directions; 222 checks on Forge 1.21.1 and on the 1.20.1 and NeoForge 1.21.1 builds without Mekanism, 229 where Mekanism is installed, which adds the gas checks).
 - All ten builds ran a scripted client tour in a real game for 2026.11.1 (2026-11-06) and the screenshots were read (`docs/frames/<module>/`): pipe models, tier colors, plates and plugs, the pipe screen and, on 26.x, the Storage Pipe next to a BarelyStorage rack. A few frames of Forge 26.1.2 and Forge 26.2 were not read.
 - The Gas Pipe was checked against real Mekanism tanks on the three builds that have Mekanism (Forge 1.20.1, NeoForge 1.20.1, NeoForge 1.21.1): in the headless self test 40,000 mB of hydrogen moves from one Mekanism chemical tank to another through three iron gas pipes, all of it arrives, and no tick moves more than 800 mB (7 more checks there, 220 in all; the same layers pass with Mekanism left out, 213 checks). The client tour on those three builds shows the yellow gas pipe joining two Mekanism tanks and the gas pipe screen. The tank models in those frames do not show their contents, so the transfer itself is proven by the self test numbers, not by a picture. Mekanism machines other than the chemical tank, the Priority Upgrade on a gas pipe against Mekanism, and Mekanism's other chemical kinds (infusion types, pigments, slurries on 1.21.1) were not tried.
-- The 2026.11.3 changes (outlines and clicks following the drawn boxes, plug arrows, centered glyphs, the exact-pipe overlay) were checked by unit tests and the headless self test on all ten builds, and looked at in client frames on NeoForge 26.1.2, 26.2, 26.3, Forge 26.1.2 and NeoForge 1.21.1 (docs/frames). The plug arrows are small from the tour camera, the outline frames were inconclusive, and the overlay was read in a client on NeoForge 26.1.2 and 26.3 only; Forge 1.20.1 tour frames were not read.
+- The 2026.11.3 changes (outlines and clicks following the drawn boxes, plug arrows, centered glyphs, the exact-pipe overlay) were checked by unit tests and the headless self test on all ten builds, and looked at in client frames on NeoForge 26.1.2, 26.2, 26.3, Forge 26.1.2 and NeoForge 1.21.1 (docs/frames). The plug arrows moved in 2026.11.4 from the plug's end face (hidden by the pipe's own core when you look along the pipe) to its four sides as one small arrow each, drawn by all ten builds and seen in a client on NeoForge 26.1.2 and NeoForge 1.21.1. Earlier, the plug arrows were small from the tour camera, the outline frames were inconclusive, and the overlay was read in a client on NeoForge 26.1.2 and 26.3 only; Forge 1.20.1 tour frames were not read.
 - Multiplayer (NeoForge 1.21.1, 2026-11-09): a client joined a dedicated server, the bundle and its pipes arrived over the network, the pipe screen opened from a click on a pipe arm (frame `docs/frames/multiplayer/mp_pipe_screen.png`) and a 5 minute session ended with no server error. A 784-bundle block (2,352 pipes: fluid, item, energy) carrying fluid and items keeps the server tick at about 2 ms (headless self test).
 - ME pipes against real AE2 (headless self test, `BARELYPIPES_AE2=1`): NeoForge 1.20.1 (AE2 15.4.12), 1.21.1 (19.2.18) and 26.1.2 (26.1.13). Not run on 26.2 and 26.3.
 - Gas: a Mekanism Chemical Infuser takes chlorine through the same pipes as hydrogen goes between tanks (NeoForge 1.21.1 self test). Other Mekanism machines were not tried.
