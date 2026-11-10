@@ -2,9 +2,10 @@
 
   python scripts/gen_plug_overlays.py            (from the repo root)
 
-Each is a 16x16 PNG with bright chevrons on a transparent field, the same for every pipe: pipe_overlay_plug_up, _down, _left and
-_right point that way in the texture, _both_v and _both_h point both ways along the height or the width. The plug side face they
-go on is only 3 by 4 pixels of the block, so the chevrons are bold and fill the whole width. Running it again changes nothing.
+Each is a 16x16 PNG with one small arrow on a transparent field, the same for every pipe: pipe_overlay_plug_up, _down, _left and
+_right point that way in the texture, _both_v and _both_h have a head at each end. The arrow is a plain shaft with a triangular
+head, light with a dark edge, and leaves a margin round it because the plug side face it goes on is only 3 by 4 pixels of the
+block. Running it again changes nothing.
 """
 import os
 
@@ -16,42 +17,48 @@ COLOR = (245, 245, 245, 255)
 EDGE = (20, 20, 24, 255)
 
 
-def chevron_up(img, top):
-    """A chevron pointing up whose tip is at row `top`, 14 wide, 3 thick, with a dark edge."""
-    pix = img.load()
-    for k in range(7):
-        for dx in (-1, 0):
-            for x in (7 + dx - k, 8 - dx + k):
-                for dy in range(3):
-                    if 0 <= x < 16 and 0 <= top + k + dy < 16:
-                        pix[x, top + k + dy] = EDGE
-    for k in range(7):
-        for x in (7 - k, 8 + k):
-            for dy in range(2):
-                if 0 <= x < 16 and 0 <= top + k + dy < 16:
-                    pix[x, top + k + dy] = COLOR
+def arrow_cells(double):
+    """The filled cells of an arrow pointing up (head at the top), or of a two-headed one."""
+    cells = set()
+    top, bottom = 2, 13
+    for k in range(4):  # head: 2, 4, 6, 8 wide
+        for x in range(7 - k, 9 + k):
+            cells.add((x, top + k))
+    for y in range(top + 4, bottom + 1):  # shaft, 2 wide
+        for x in (7, 8):
+            cells.add((x, y))
+    if double:
+        for k in range(4):
+            for x in range(7 - k, 9 + k):
+                cells.add((x, bottom - k))
+    return cells
 
 
-def up(rows):
+def draw(cells):
     img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
-    for top in rows:
-        chevron_up(img, top)
+    pix = img.load()
+    for x, y in cells:
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < 16 and 0 <= ny < 16 and (nx, ny) not in cells:
+                    pix[nx, ny] = EDGE
+    for x, y in cells:
+        pix[x, y] = COLOR
     return img
 
 
 def main():
-    one = up((0, 8))
+    one = draw(arrow_cells(False))
+    both_v = draw(arrow_cells(True))
     out = {
         'up': one,
         'down': one.transpose(Image.FLIP_TOP_BOTTOM),
         'left': one.transpose(Image.ROTATE_90),
         'right': one.transpose(Image.ROTATE_270),
+        'both_v': both_v,
+        'both_h': both_v.transpose(Image.ROTATE_90),
     }
-    both_v = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
-    both_v.alpha_composite(up((0,)).crop((0, 0, 16, 8)).resize((16, 8)), (0, 0))
-    both_v.alpha_composite(up((0,)).transpose(Image.FLIP_TOP_BOTTOM).crop((0, 8, 16, 16)), (0, 8))
-    out['both_v'] = both_v
-    out['both_h'] = both_v.transpose(Image.ROTATE_90)
     for name, img in out.items():
         img.save(os.path.join(BLOCK, f'pipe_overlay_plug_{name}.png'))
         print('wrote', name)
