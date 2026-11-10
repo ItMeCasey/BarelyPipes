@@ -74,6 +74,24 @@ final class GasShots {
                 GasSelfTest.amountOf(net.minecraft.client.Minecraft.getInstance().level, sink, CHLORINE)));
         then2(() -> ShotTour.moveTo(new Vec3(X0 + 4.9, ground + 1.4, -1.6), new Vec3(X0 + 4.5, ground + 0.5, 0.5)));
         ShotTour.shoot("gas_receiving_tank_after", 6);
+        // Open the receiving tank's own screen with a real use of the block (the game's handler, not the OS mouse): the
+        // screen is filled by the server over the menu sync, so it shows what the tank really holds.
+        ShotTour.then(4, () -> {
+            net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+            Vec3 at = Vec3.atCenterOf(sink);
+            mc.gameMode.useItemOn(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND,
+                    new net.minecraft.world.phys.BlockHitResult(at, Direction.NORTH, sink, false));
+        });
+        ShotTour.shoot("gas_receiving_tank_gui", 40);
+        ShotTour.then(2, () -> net.minecraft.client.Minecraft.getInstance().setScreen(null));
+        ShotTour.then(4, () -> {
+            net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+            Vec3 at = Vec3.atCenterOf(source);
+            mc.gameMode.useItemOn(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND,
+                    new net.minecraft.world.phys.BlockHitResult(at, Direction.NORTH, source, false));
+        });
+        ShotTour.shoot("gas_source_tank_gui", 40);
+        ShotTour.then(2, () -> net.minecraft.client.Minecraft.getInstance().setScreen(null));
         then2(() -> ShotTour.moveTo(new Vec3(X0 + 4.5, ground + 3.2, -1.2), new Vec3(X0 + 4.5, ground + 0.8, 0.5)));
         ShotTour.shoot("gas_receiving_tank_top", 6);
         then2(() -> ShotTour.moveTo(new Vec3(X0 + 2.5, ground + 5.0, 0.4), new Vec3(X0 + 2.5, ground + 0.5, 0.5)));

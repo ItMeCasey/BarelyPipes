@@ -67,6 +67,9 @@ public final class SelfTest {
         if (MekanismCompat.loaded()) {
             GasSelfTest.setUp(level);
         }
+        if (com.itmecasey.barelypipes.compat.ae2.Ae2Compat.loaded()) {
+            Ae2SelfTest.setUp(level);
+        }
         running = true;
     }
 
@@ -75,6 +78,9 @@ public final class SelfTest {
             return;
         }
         TransferSelfTest.tick();
+        if (com.itmecasey.barelypipes.compat.ae2.Ae2Compat.loaded()) {
+            Ae2SelfTest.tick();
+        }
         if (MekanismCompat.loaded()) {
             GasSelfTest.tick();
         }
@@ -86,7 +92,7 @@ public final class SelfTest {
             ScreenSelfTest.tick();
         }
         if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished()
-                && (!MekanismCompat.loaded() || GasSelfTest.finished())) {
+                && (!MekanismCompat.loaded() || GasSelfTest.finished()) && (!com.itmecasey.barelypipes.compat.ae2.Ae2Compat.loaded() || Ae2SelfTest.finished())) {
             finish();
         }
     }
@@ -225,6 +231,11 @@ public final class SelfTest {
     private static void finish() {
         BarelyPipes.LOGGER.info("SELFTEST DONE failures={} passed={}", failed, passed);
         running = false;
+        if (System.getenv("BARELYPIPES_KEEP") != null) {
+            // The multiplayer check joins this server and looks at what the self test built; it is stopped by hand.
+            BarelyPipes.LOGGER.info("SELFTEST server kept running (BARELYPIPES_KEEP)");
+            return;
+        }
         server.halt(false);
     }
 }

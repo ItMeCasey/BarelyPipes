@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased (NeoForge 1.21.1 jar only so far)
+
+- New: Jade and WTHIT plugins on NeoForge 1.21.1 show the exact pipe under the crosshair (type and tier, side and part, mode, connection, throughput, upgrades, distribution), the same lines as the Show Me What This Is overlay. Seen in a real client with Jade and with WTHIT. The other builds have them next.
+
 ## 2026.11.2
 
 - Show Me What This Is (all ten builds): the overlay now names the exact pipe you look at, such as Gold Item Pipe, Diamond Energy Pipe or Storage Pipe, with that pipe's item as the icon, instead of "Pipe Bundle". Detail lines give the side and whether you are on an arm, the core or a plug, the mode, what the side connects to, the throughput, Speed and Capacity upgrades, Filter and Priority; the core also lists the other pipes of the bundle.

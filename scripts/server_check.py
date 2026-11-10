@@ -44,6 +44,8 @@ def check(layer):
     windows = os.name == "nt"
     command = ["cmd", "/c", str(folder / "gradlew.bat")] if windows else [str(folder / "gradlew")]
     extra = ["-PnoMekanism"] if os.environ.get("BARELYPIPES_NO_MEKANISM") else []
+    if os.environ.get("BARELYPIPES_AE2"):
+        extra.append("-Pae2")
     proc = subprocess.Popen(command + ["runServer", "--no-daemon", "-q", "-PdevTools"] + extra, cwd=folder, env=env,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace",
                             start_new_session=not windows)

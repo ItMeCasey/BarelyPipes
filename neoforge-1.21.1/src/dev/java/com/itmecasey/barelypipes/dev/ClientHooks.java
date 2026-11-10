@@ -9,6 +9,6 @@ final class ClientHooks {
     }
 
     static void install() {
-        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) -> ShotTour.tick());
+        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) -> { ShotTour.tick(); MultiplayerTour.tick(); });
     }
 }

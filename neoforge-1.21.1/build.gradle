@@ -120,7 +120,7 @@ if (project.hasProperty('windowSize')) {
     }
 }
 
-def viewerFiles = [jade: 'jade-324717:8591319', jei: 'jei-238222:9393327', rei: 'roughly-enough-items-310111:6199140', emi: 'emi-580555:8081408', bei: 'bei-1783910:9438917', architectury: 'architectury-api-419699:8492726', cloth: 'cloth-config-348521:5729127']
+def viewerFiles = [jade: 'jade-324717:8591319', jei: 'jei-238222:9393327', rei: 'roughly-enough-items-310111:6199140', emi: 'emi-580555:8081408', bei: 'bei-1783910:9469408', architectury: 'architectury-api-419699:8492726', cloth: 'cloth-config-348521:5729127']
 dependencies {
     compileOnly 'curse.maven:jade-324717:8591319'
 }
@@ -139,6 +139,18 @@ repositories {
 }
 dependencies {
     compileOnly "maven.modrinth:ae2:${ae2_version}"
+    // WTHIT (optional look-at overlay): compile-only; -Pwthit (with -PdevTools) runs it in the dev client. Do not load it with Jade.
+    compileOnly "maven.modrinth:wthit:${wthit_version}"
+    compileOnly "maven.modrinth:badpackets:${badpackets_version}"
+    if (project.hasProperty('devTools') && project.hasProperty('wthit')) {
+        runtimeOnly "maven.modrinth:wthit:${wthit_version}"
+        runtimeOnly "maven.modrinth:badpackets:${badpackets_version}"
+    }
+    // -Pae2 (with -PdevTools) runs AE2 in the dev client and server for the ME pipe checks.
+    if (project.hasProperty('devTools') && project.hasProperty('ae2')) {
+        runtimeOnly "maven.modrinth:ae2:${ae2_version}"
+        runtimeOnly "maven.modrinth:guideme:${guideme_version}"
+    }
 }
 
 // Mekanism is optional: the Gas Pipe carries its chemicals when it is installed. Compile-only here, so the release jar neither

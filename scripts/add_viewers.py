@@ -17,6 +17,8 @@ IDS = {
     "forge-26.1.2": {"bei": "bei-1783910:9469399"},
     "forge-26.2": {"bei": "bei-1783910:9469395"},
     "forge-26.3": {"bei": "bei-1783910:9469392"},
+    "neoforge-1.21.1": {"jade": "jade-324717:8591319", "jei": "jei-238222:9393327", "rei": "roughly-enough-items-310111:6199140", "emi": "emi-580555:8081408", "bei": "bei-1783910:9469408",
+                       "architectury": "architectury-api-419699:8492726", "cloth": "cloth-config-348521:5729127"},
     "forge-1.21.1": {"jei": "jei-238222:9393325", "bei": "bei-1783910:9469405"},
 }
 # Added to a Forge 26.x build.gradle that has no viewer block yet (a copy of what the NeoForge layers carry).

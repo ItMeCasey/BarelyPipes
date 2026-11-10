@@ -36,7 +36,7 @@ public final class DevHooks {
         ITEMS.register(modBus);
         ENTITIES.register(modBus);
         modBus.addListener(DevHooks::capabilities);
-        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT && System.getenv("BARELYPIPES_SHOTS") != null) {
+        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT && (System.getenv("BARELYPIPES_SHOTS") != null || MultiplayerTour.enabled())) {
             ClientHooks.install();
         }
         if (SelfTest.requested()) {

@@ -23,7 +23,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ISOLATED = r"C:\Users\casey\.claude\tools\launch-isolated.ps1"
 WHO = r"C:\Users\casey\.claude\tools\who-owns-minecraft.ps1"
-ISOLATED_LOG = Path(os.environ.get("LOCALAPPDATA", "")) / "launch-isolated" / "MCTest.log"
+# Own desktop and log (BPipes) so other projects' launches and kills on the shared MCTest desktop do not touch this run.
+DESKTOP = "BPipes"
+ISOLATED_LOG = Path(os.environ.get("LOCALAPPDATA", "")) / "launch-isolated" / f"{DESKTOP}.log"
 TIMEOUT = 600
 OPTIONS = {
     "pauseOnLostFocus": "false", "fullscreen": "false", "guiScale": "2", "lang": "en_us", "onboardAccessibility": "false",
@@ -58,10 +60,10 @@ def check(layer, mods, script, tag):
     if shots.exists():
         shutil.rmtree(shots)
     start_size = ISOLATED_LOG.stat().st_size if ISOLATED_LOG.exists() else 0
-    env = {"BARELYPIPES_SHOTS": "viewers", "BARELYPIPES_VIEWER_SCRIPT": script}
+    env = {"BARELYPIPES_SHOTS": os.environ.get("VIEWER_SHOTS", "viewers"), "BARELYPIPES_VIEWER_SCRIPT": script}
     sets = "".join(f'set "{k}={v}"&& ' for k, v in env.items())
-    command = sets + f".\\gradlew.bat runClient --no-daemon -q -PdevTools -Pviewers={mods} -PwindowSize={WINDOW}"
-    subprocess.run(["powershell", "-NoProfile", "-File", ISOLATED, "-Run", "-WorkDir", str(folder), "-Command", command],
+    command = sets + f".\\gradlew.bat runClient --no-daemon -q -PdevTools {"-Pviewers=" + mods if mods != "-" else ""} {os.environ.get("VIEWER_EXTRA", "")} -PwindowSize={WINDOW}"
+    subprocess.run(["powershell", "-NoProfile", "-File", ISOLATED, "-Run", "-Desktop", DESKTOP, "-WorkDir", str(folder), "-Command", command],
                    check=True, capture_output=True)
     began = time.time()
 
@@ -85,7 +87,7 @@ def check(layer, mods, script, tag):
     if done:
         time.sleep(10)
     log = lines()
-    subprocess.run(["powershell", "-NoProfile", "-File", ISOLATED, "-Kill"], capture_output=True)
+    subprocess.run(["powershell", "-NoProfile", "-File", ISOLATED, "-Kill", "-Desktop", DESKTOP], capture_output=True)
     tag = tag or mods.split(",")[0]
     (run / f"viewer_check_{tag}.log").write_text("\n".join(log), encoding="utf-8")
     names = sorted(p.name for p in shots.glob("*.png")) if shots.exists() else []
