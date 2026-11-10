@@ -1,6 +1,7 @@
 package com.itmecasey.barelypipes.dev;
 
 import com.itmecasey.barelypipes.conduit.ConduitBundleBlockEntity;
+import com.itmecasey.barelypipes.conduit.config.PipeConfigActions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.screens.ConnectScreen;
@@ -70,6 +71,12 @@ final class MultiplayerTour {
                 }
             }
             case 2 -> {
+                if (tick == 2) {
+                    // Hold still in the air (a creative player flies): without it the player falls out of reach of the scene.
+                    mc.player.getAbilities().flying = true;
+                    mc.player.onUpdateAbilities();
+                    mc.player.connection.sendCommand("tp @s 2.5 201 -1.5 0 20");
+                }
                 if (tick == 60) {
                     BlockPos pos = new BlockPos(2, 200, 2);
                     boolean block = mc.level.getBlockEntity(pos) instanceof ConduitBundleBlockEntity;
@@ -85,24 +92,30 @@ final class MultiplayerTour {
             }
             case 3 -> {
                 if (tick == 5) {
-                    // Use the fluid pipe's north arm with an empty hand through the game's own handler: the server picks the
-                    // pipe from the hit point and opens the pipe screen (a menu with open data sent over the network).
+                    // Find a point on a pipe connector the way the server will (the same lookup the block uses), then use the block
+                    // there with an empty hand through the game's own handler: the server opens the pipe screen over the network.
                     BlockPos pos = new BlockPos(2, 200, 2);
                     ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) mc.level.getBlockEntity(pos);
-                    com.itmecasey.barelypipes.core.conduit.Box arm = null;
-                    for (var piece : com.itmecasey.barelypipes.core.conduit.ConduitLayout.of(entity.bundle()).pieces()) {
-                        if (piece.kind() == com.itmecasey.barelypipes.core.conduit.ConduitLayout.Kind.ARM
-                                && piece.type() == com.itmecasey.barelypipes.core.conduit.PipeType.FLUID) {
-                            arm = piece.box();
+                    Vec3 found = null;
+                    for (int x = 0; x < 32 && found == null; x++) {
+                        for (int y = 0; y < 32 && found == null; y++) {
+                            for (int z = 0; z < 32 && found == null; z++) {
+                                if (PipeConfigActions.resolveTarget(entity.bundle(), x / 2.0, y / 2.0, z / 2.0) != null) {
+                                    found = new Vec3(x / 2.0, y / 2.0, z / 2.0);
+                                }
+                            }
                         }
                     }
-                    LOGGER.info("BARELYPIPES-MP fluid north arm box: {}", arm);
-                    if (arm != null) {
-                        Vec3 hit = new Vec3(pos.getX() + (arm.minX() + arm.maxX()) / 32.0, pos.getY() + (arm.minY() + arm.maxY()) / 32.0,
-                                pos.getZ() + (arm.minZ() + arm.maxZ()) / 32.0);
-                        mc.player.connection.sendCommand("tp @s " + (hit.x) + " " + (hit.y + 0.2) + " " + (pos.getZ() - 2.0) + " 0 5");
-                        var result = new BlockHitResult(hit, Direction.NORTH, pos, false);
-                        mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, result);
+                    LOGGER.info("BARELYPIPES-MP connector point in the bundle (pixels): {}, main hand: {}", found, mc.player.getMainHandItem());
+                    if (found != null) {
+                        Vec3 at = new Vec3(pos.getX() + found.x / 16.0, pos.getY() + found.y / 16.0, pos.getZ() + found.z / 16.0);
+                        mc.player.getInventory().selected = 8;
+                        mc.player.getInventory().setItem(8, net.minecraft.world.item.ItemStack.EMPTY);
+                        // Look at the point first, so the position and view the server checks match the click.
+                        mc.player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, at);
+                        net.minecraft.world.InteractionResult result = mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND,
+                                new BlockHitResult(at, Direction.SOUTH, pos, false));
+                        LOGGER.info("BARELYPIPES-MP use result {} at {} from {} mode {}", result, at, mc.player.position(), mc.gameMode.getPlayerMode());
                     }
                 }
                 if (tick == 60) {

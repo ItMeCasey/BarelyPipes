@@ -40,7 +40,7 @@ Docs and recipes: [itmecasey.com/wiki/barelypipes](https://itmecasey.com/wiki/ba
 - **Applied Energistics 2:** ME pipes carry a real ME grid. Recipes load only when AE2 is installed.
 - **Mekanism** (Minecraft 1.20.1 on Forge and NeoForge, 1.21.1 on NeoForge): the Gas Pipe joins Mekanism tanks and machines and moves their gases. Mekanism has no build for 1.21.1 Forge, 26.1.2, 26.2 or 26.3, so there the Gas Pipe does nothing.
 - **Forge Energy and the standard fluid and item handlers:** work with any mod that speaks them.
-- Item viewers (BEI, REI, JEI, EMI) and Jade have no plugin yet; Show Me What This Is shows the exact pipe, tier and details under the crosshair on all ten builds. This is on the plan, not done.
+- Show Me What This Is, WTHIT (all ten builds) and Jade (where Jade exists) show the exact pipe, tier and details under the crosshair. The item viewers (JEI, REI, EMI, BEI) need no plugin and list every pipe and recipe; they were checked on NeoForge 1.21.1.
 
 Install: put the jar for your Minecraft version in `mods` on the server and on every client. Each file is built for one loader and one Minecraft version, so take the Forge jar or the NeoForge jar to match your loader.
 

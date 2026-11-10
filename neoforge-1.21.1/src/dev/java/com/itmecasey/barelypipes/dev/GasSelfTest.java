@@ -50,6 +50,12 @@ final class GasSelfTest {
 
     private static BlockPos source;
     private static BlockPos sink;
+    // The second scenario: another chemical (chlorine) into another kind of machine (a chemical infuser) through the same pipes.
+    private static final ResourceLocation INFUSER = ResourceLocation.fromNamespaceAndPath("mekanism", "chemical_infuser");
+    private static final ResourceLocation CHLORINE = ResourceLocation.fromNamespaceAndPath("mekanism", "chlorine");
+    private static final int START2 = 6_000;
+    private static BlockPos source2;
+    private static BlockPos sink2;
 
     private GasSelfTest() {
     }
@@ -73,6 +79,7 @@ final class GasSelfTest {
         if (!built) {
             if (SelfTest.blockEntitiesTick(level, new BlockPos(2, Y, Z))) {
                 build(level, Y, Z);
+                build2(level, Y + 4, Z);
                 built = true;
                 previous = amountOf(level, source, HYDROGEN);
             }
@@ -87,6 +94,7 @@ final class GasSelfTest {
         }
         if (tick == CHECK_LATE) {
             check(level);
+            check2(level);
             finished = true;
         }
     }
@@ -108,6 +116,45 @@ final class GasSelfTest {
         }
         setMode(level, new BlockPos(2, y, z), Face.WEST, ConnectionMode.IMPORT);
         setMode(level, new BlockPos(4, y, z), Face.EAST, ConnectionMode.EXPORT);
+    }
+
+    /** A tank of chlorine, three iron gas pipes and a Mekanism Chemical Infuser (its left side takes a chemical into an input tank). */
+    private static void build2(ServerLevel level, int y, int z) {
+        source2 = new BlockPos(1, y, z);
+        sink2 = new BlockPos(5, y, z);
+        placeTank(level, source2, Direction.EAST);
+        placeMachine(level, sink2, INFUSER, Direction.NORTH);
+        fillTank(level, source2, CHLORINE, START2);
+        for (int x = 2; x <= 4; x++) {
+            BlockPos pos = new BlockPos(x, y, z);
+            level.setBlock(pos, ModBlocks.CONDUIT_BUNDLE.get().defaultBlockState(), Block.UPDATE_ALL);
+            bundle(level, pos).addPipe(PipeType.GAS, Tier.IRON);
+        }
+        setMode(level, new BlockPos(2, y, z), Face.WEST, ConnectionMode.IMPORT);
+        setMode(level, new BlockPos(4, y, z), Face.EAST, ConnectionMode.EXPORT);
+    }
+
+    private static void check2(ServerLevel level) {
+        long left = amountOf(level, source2, CHLORINE);
+        long arrived = amountOf(level, sink2, CHLORINE);
+        SelfTest.check("gas: a Mekanism Chemical Infuser offers a chemical handler", MekanismChemicals.handler(level, sink2, null) != null);
+        SelfTest.check("gas: chlorine (another chemical) arrives in a Chemical Infuser (another machine), " + arrived + " of " + START2 + " mB",
+                arrived > 0);
+        SelfTest.check("gas: chlorine is neither lost nor made on the way", left + arrived == START2);
+    }
+
+    private static void placeMachine(ServerLevel level, BlockPos pos, ResourceLocation id, Direction facing) {
+        Block block = BuiltInRegistries.BLOCK.get(id);
+        BlockState state = block.defaultBlockState();
+        if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+            state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, facing);
+        }
+        level.setBlock(pos, state, Block.UPDATE_ALL);
+        BlockEntity entity = level.getBlockEntity(pos);
+        if (entity != null) {
+            entity.applyComponentsFromItemStack(new ItemStack(block));
+            entity.setChanged();
+        }
     }
 
     static void check(ServerLevel level) {

@@ -131,3 +131,25 @@ if (project.hasProperty('viewers')) {
         project.property('viewers').split(',').each { name -> runtimeOnly "curse.maven:${viewerFiles[name.trim()]}" }
     }
 }
+
+// Modrinth Maven (compile-only look-at mods). Not exclusive: ForgeGradle serves remapped copies under the same group.
+repositories {
+    maven {
+        name = 'Modrinth (look-at mods)'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+}
+
+// Jade and WTHIT (optional look-at overlays): compile-only; -PdevTools -Plookmod=jade|wthit runs one of them in the dev client.
+dependencies {
+    compileOnly "maven.modrinth:wthit:xnO4lALy"
+}
+if (project.hasProperty('devTools') && project.hasProperty('lookmod')) {
+    dependencies {
+    if (project.property('lookmod') == 'wthit') {
+        runtimeOnly "maven.modrinth:wthit:xnO4lALy"
+        runtimeOnly "maven.modrinth:badpackets:XGbJvoTc"
+    }
+    }
+}

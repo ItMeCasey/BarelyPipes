@@ -65,6 +65,9 @@ public final class SelfTest {
         TransferSelfTest.setUp(level);
         ToolSelfTest.setUp(level);
         ScreenSelfTest.setUp(level);
+        if (com.itmecasey.barelypipes.compat.ae2.Ae2Compat.loaded()) {
+            Ae2SelfTest.setUp(level);
+        }
         if (com.itmecasey.barelypipes.conduit.transfer.StorageLink.loaded()) {
             StorageSelfTest.setUp(level);
         }
@@ -76,6 +79,9 @@ public final class SelfTest {
             return;
         }
         TransferSelfTest.tick();
+        if (com.itmecasey.barelypipes.compat.ae2.Ae2Compat.loaded()) {
+            Ae2SelfTest.tick();
+        }
         // The tool checks place and remove many bundles, which must not disturb the timed transfer checks.
         if (TransferSelfTest.finished()) {
             ToolSelfTest.tick();
@@ -86,7 +92,8 @@ public final class SelfTest {
         if (com.itmecasey.barelypipes.conduit.transfer.StorageLink.loaded()) {
             StorageSelfTest.tick();
         }
-        if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished() && StorageSelfTest.finished()) {
+        if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished() && StorageSelfTest.finished()
+                && (!com.itmecasey.barelypipes.compat.ae2.Ae2Compat.loaded() || Ae2SelfTest.finished())) {
             finish();
         }
     }

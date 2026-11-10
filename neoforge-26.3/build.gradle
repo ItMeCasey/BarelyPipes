@@ -123,9 +123,6 @@ if (project.hasProperty('windowSize')) {
 }
 
 def viewerFiles = [jade: 'jade-324717:9042207', jei: 'jei-238222:9453343', rei: 'roughly-enough-items-310111:9090699', bei: 'bei-1783910:9469393', architectury: 'architectury-api-419699:9111315', cloth: 'cloth-config-348521:8952995']
-dependencies {
-    compileOnly 'curse.maven:jade-324717:9156414'
-}
 if (project.hasProperty('viewers')) {
     dependencies {
         project.property('viewers').split(',').each { name -> runtimeOnly "curse.maven:${viewerFiles[name.trim()]}" }
@@ -149,4 +146,21 @@ dependencies {
 // ../libs (the com.itmecasey.smwti.api classes of SMWTI's own jar); the plugin class is never loaded unless SMWTI is installed.
 dependencies {
     compileOnly files('../libs/smwti-api-26.3.jar')
+}
+
+// Jade and WTHIT (optional look-at overlays): compile-only; -PdevTools -Plookmod=jade|wthit runs one of them in the dev client.
+dependencies {
+    compileOnly "maven.modrinth:jade:dVB8U7Td"
+    compileOnly "maven.modrinth:wthit:Id8LEy2N"
+}
+if (project.hasProperty('devTools') && project.hasProperty('lookmod')) {
+    dependencies {
+    if (project.property('lookmod') == 'jade') {
+        runtimeOnly "maven.modrinth:jade:dVB8U7Td"
+    }
+    if (project.property('lookmod') == 'wthit') {
+        runtimeOnly "maven.modrinth:wthit:Id8LEy2N"
+        runtimeOnly "maven.modrinth:badpackets:oPDewtRE"
+    }
+    }
 }

@@ -64,6 +64,7 @@ public final class SelfTest {
         TransferSelfTest.setUp(level);
         ToolSelfTest.setUp(level);
         ScreenSelfTest.setUp(level);
+        PerfSelfTest.setUp(level);
         if (MekanismCompat.loaded()) {
             GasSelfTest.setUp(level);
         }
@@ -91,7 +92,11 @@ public final class SelfTest {
         if (ToolSelfTest.finished()) {
             ScreenSelfTest.tick();
         }
-        if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished()
+        // The big network goes last: it loads the tick, so the timed checks above must be done first.
+        if (ScreenSelfTest.finished()) {
+            PerfSelfTest.tick();
+        }
+        if (TransferSelfTest.finished() && ToolSelfTest.finished() && ScreenSelfTest.finished() && PerfSelfTest.finished()
                 && (!MekanismCompat.loaded() || GasSelfTest.finished()) && (!com.itmecasey.barelypipes.compat.ae2.Ae2Compat.loaded() || Ae2SelfTest.finished())) {
             finish();
         }

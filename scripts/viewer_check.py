@@ -87,7 +87,7 @@ def check(layer, mods, script, tag):
     if done:
         time.sleep(10)
     log = lines()
-    subprocess.run(["powershell", "-NoProfile", "-File", ISOLATED, "-Kill", "-Desktop", DESKTOP], capture_output=True)
+    subprocess.run(["powershell", "-NoProfile", "-File", ISOLATED, "-Kill", "-WorkDir", str(ROOT), "-Desktop", DESKTOP], capture_output=True)
     tag = tag or mods.split(",")[0]
     (run / f"viewer_check_{tag}.log").write_text("\n".join(log), encoding="utf-8")
     names = sorted(p.name for p in shots.glob("*.png")) if shots.exists() else []

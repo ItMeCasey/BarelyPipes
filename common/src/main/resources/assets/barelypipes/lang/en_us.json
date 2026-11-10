@@ -1,5 +1,6 @@
 {
   "block.barelypipes.conduit_bundle": "Pipe Bundle",
+  "config.jade.plugin_barelypipes.pipe_look": "Pipe details",
   "connection_mode.barelypipes.blocked": "Blocked",
   "connection_mode.barelypipes.blocked.tooltip": "Not connected. Nothing can attach here.",
   "connection_mode.barelypipes.export": "Export",

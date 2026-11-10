@@ -33,7 +33,7 @@ public class BarelyPipesWthitClientPlugin implements IWailaClientPlugin {
                     || !hit.getBlockPos().equals(accessor.getPosition())) {
                 return;
             }
-            PipeLookInfo.Look look = PipeLookAdapter.look(accessor.getWorld(), accessor.getPosition(), bundle, hit.getLocation());
+            PipeLookInfo.Look look = PipeLookAdapter.look(accessor.getLevel(), accessor.getPosition(), bundle, hit.getLocation());
             if (look == null) {
                 return;
             }

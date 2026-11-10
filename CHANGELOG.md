@@ -1,8 +1,10 @@
 # Changelog
 
-## Unreleased (NeoForge 1.21.1 jar only so far)
+## 2026.11.3
 
-- New: Jade and WTHIT plugins on NeoForge 1.21.1 show the exact pipe under the crosshair (type and tier, side and part, mode, connection, throughput, upgrades, distribution), the same lines as the Show Me What This Is overlay. Seen in a real client with Jade and with WTHIT. The other builds have them next.
+- New: Jade and WTHIT plugins show the exact pipe under the crosshair (type and tier, side and part, mode, connection, throughput, upgrades, distribution), the same lines as the Show Me What This Is overlay. WTHIT works on all ten builds; Jade on NeoForge 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3 and Forge 1.20.1 (Jade has no other Forge builds). Both are optional and add nothing when not installed.
+- Fixed: Jade's configuration screen showed a raw key for the Barely Pipes plugin name.
+- Checked, no change needed: ME pipes join real AE2 grids (NeoForge 1.20.1, 1.21.1 and 26.1.2), the Gas Pipe moves chlorine into a Mekanism Chemical Infuser as well as hydrogen between tanks, the pipe screen opens on a dedicated server, and a 784-bundle block carrying fluid, items and energy keeps the server tick far under budget.
 
 ## 2026.11.2
 

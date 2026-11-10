@@ -140,3 +140,28 @@ dependencies {
 dependencies {
     compileOnly files('../libs/smwti-api-1.20.1.jar')
 }
+
+// Jade and WTHIT (optional look-at overlays): compile-only; -PdevTools -Plookmod=jade|wthit runs one of them in the dev client.
+dependencies {
+    modCompileOnly "maven.modrinth:jade:xJQHCmWJ"
+    modCompileOnly "maven.modrinth:wthit:t9rIojT8"
+}
+if (project.hasProperty('devTools') && project.hasProperty('lookmod')) {
+    dependencies {
+    if (project.property('lookmod') == 'jade') {
+        modRuntimeOnly "maven.modrinth:jade:xJQHCmWJ"
+    }
+    if (project.property('lookmod') == 'wthit') {
+        modRuntimeOnly "maven.modrinth:wthit:t9rIojT8"
+        modRuntimeOnly "maven.modrinth:badpackets:dcVcnZ7u"
+    }
+    }
+}
+
+// -PdevTools -Pae2 runs AE2 in the dev client and server for the ME pipe checks (the ME pipes join real AE2 grids).
+if (project.hasProperty('devTools') && project.hasProperty('ae2')) {
+    dependencies {
+        modRuntimeOnly "maven.modrinth:ae2:${ae2_version}"
+        modRuntimeOnly "maven.modrinth:guideme:i7Tp1AHw"
+    }
+}

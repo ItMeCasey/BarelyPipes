@@ -216,6 +216,8 @@ def lang():
         ("priority", "Priority: %s"), ("others", "Also in this bundle: %s"), ("pipes", "Pipes: %s"),
     ]:
         out[f"smwti.{MODID}.{key}"] = text
+    # Jade asks for a name for every plugin in its config screen (and asserts on it in dev).
+    out[f"config.jade.plugin_{MODID}.pipe_look"] = "Pipe details"
     for k in list(out):
         if "wrench" in k:
             out[k] = out[k].replace("Flux Wrench", "Pipe Wrench")

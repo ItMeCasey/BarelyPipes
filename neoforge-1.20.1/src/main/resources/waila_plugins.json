@@ -1,0 +1,9 @@
+{
+  "barelypipes:pipe_look": {
+    "entrypoints": {
+      "client": "com.itmecasey.barelypipes.compat.wthit.BarelyPipesWthitClientPlugin"
+    },
+    "side": "client",
+    "required": []
+  }
+}
