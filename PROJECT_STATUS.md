@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-10
-Summary: Barely Pipes 2026.11.3 is built and checked locally on the reference module (NeoForge 1.21.1) but not yet pushed or released: it adds Jade and WTHIT plugins on all builds that have those mods, and 2026.11.2 is the released version (ten beta jars on CurseForge and GitHub); what is left is the release itself, a close look at the plug arrows, the BarelyStorage see-through fix in a client, the wiki redeploy and the GitHub social preview.
+Summary: Barely Pipes 2026.11.3 is released (tag v2026.11.3, release run green, wiki redeployed) with Jade and WTHIT plugins on all builds that have those mods; what is left is Jade and WTHIT on Forge 1.20.1 (the mods' own mixins fail in the dev client), a close look at the plug arrows, the BarelyStorage see-through fix in a client and the GitHub social preview.
 Spend: none
 
 ## Foundation
@@ -46,6 +46,6 @@ Spend: none
 - [x] GitHub repository ItMeCasey/BarelyPipes, tags v2026.11.1 and v2026.11.2, pre-releases with ten jars each (w:2)
 - [x] CurseForge project 1787208 with ten beta files for 2026.11.2 and ten for 2026.11.1 (file list read through the API; review state not checked) (w:3)
 - [x] Branding, CurseForge description, README, CHANGELOG and issue templates (w:3)
-- [~] Wiki: 18 pages deployed at itmecasey.com/wiki/barelypipes; the draft folder has newer wording (SMWTI on all ten builds, 126 tests, evidence on viewers, AE2, multiplayer and gas, jar names 2026.11.3) that needs a redeploy; no screenshots on the pages yet; the wiki folder is not committed in the site repo (w:3)
+- [x] Wiki: 18 pages deployed at itmecasey.com/wiki/barelypipes, redeployed 2026-11-10 with the newer wording (SMWTI on all ten builds, evidence on viewers, AE2, multiplayer and gas, jar names 2026.11.3; deployed by the PM); no screenshots on the pages yet (w:3)
 - [ ] GitHub social preview image (banners/social.png; only the GitHub web settings page can set it: Casey) (w:1)
-- [ ] 2026.11.3 pushed, CI green on all ten builds, tagged and uploaded (PM; all ten modules are at 2026.11.3 in gradle.properties; every jar changed because the shared lang file gained the Jade key and nine builds gained plugin classes) (w:2)
+- [x] 2026.11.3 pushed, tagged v2026.11.3 and the release run succeeded (done by the PM, reported 2026-11-10; all ten modules are at 2026.11.3) (w:2)
