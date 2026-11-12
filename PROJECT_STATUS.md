@@ -1,6 +1,6 @@
 # Project Status
 <!-- status-format: 1 -->
-Updated: 2026-11-10
+Updated: 2026-11-12
 Summary: Barely Pipes 2026.11.4 is built and checked locally (plug arrows moved onto the plug sides on all ten builds, Jade and WTHIT and the rack top faces checked) but not yet pushed, tagged or released; 2026.11.3 is the released version; what is left is the 2026.11.4 release itself and the wiki redeploy.
 Spend: none
 
@@ -49,3 +49,4 @@ Spend: none
 - [x] Wiki: 18 pages deployed at itmecasey.com/wiki/barelypipes, redeployed 2026-11-10 with the newer wording (SMWTI on all ten builds, evidence on viewers, AE2, multiplayer and gas, jar names 2026.11.3; deployed by the PM); no screenshots on the pages yet (w:3)
 - [x] 2026.11.3 pushed, tagged v2026.11.3 and the release run succeeded (done by the PM, reported 2026-11-10; all ten modules are at 2026.11.3) (w:2)
 - [x] 2026.11.4 pushed, CI green on all ten builds, tagged and uploaded, wiki redeployed (PM, 2026-11-10) (w:1)
+- [x] 2026.11.5 (Forge and NeoForge 26.3 only): mouse button fix for the 26.3 renumbering; compiled, not yet tried in a client (w:1)

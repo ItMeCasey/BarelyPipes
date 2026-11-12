@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026.11.5 (Forge and NeoForge 26.3 only)
+
+- Fixed: ghost slots on the plug screens ignored left clicks and right clicks on Minecraft 26.3. Minecraft 26.3 renumbered the mouse buttons (left is now 1, middle 2, right 3), and the mod still compared clicks against 0 and 1. The other eight builds are unchanged and stay at 2026.11.4.
+
 ## 2026.11.4
 
 - Changed: the import, export and open arrows now sit on the four sides of each plug, where you see them from normal angles, instead of in the margins of the plug's end face (which a pipe's own core hides when you look along it). One small outlined arrow points into the pipe for import and out toward the neighbor for export, and open has a head at each end. All ten builds; checked in a client on NeoForge 26.1.2 and NeoForge 1.21.1.
