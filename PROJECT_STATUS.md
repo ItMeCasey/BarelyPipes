@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-13
-Summary: Barely Pipes 2026.11.4 is built and checked locally (plug arrows moved onto the plug sides on all ten builds, Jade and WTHIT and the rack top faces checked) but not yet pushed, tagged or released; 2026.11.3 is the released version; what is left is the 2026.11.4 release itself and the wiki redeploy.
+Summary: Barely Pipes 2026.11.6 is built and checked locally on the reference module (optional ModJS scripting on all ten builds and the hint text removed) but not yet pushed, tagged or released; 2026.11.5 is the last release (26.3 only), and a client frame of the changed pipe screen is still missing.
 Spend: none
 
 ## Foundation
@@ -51,3 +51,10 @@ Spend: none
 - [x] 2026.11.3 pushed, tagged v2026.11.3 and the release run succeeded (done by the PM, reported 2026-11-10; all ten modules are at 2026.11.3) (w:2)
 - [x] 2026.11.4 pushed, CI green on all ten builds, tagged and uploaded, wiki redeployed (PM, 2026-11-10) (w:1)
 - [x] 2026.11.5 (Forge and NeoForge 26.3 only): mouse button fix for the 26.3 renumbering; compiled, not yet tried in a client (w:1)
+
+## 2026.11.6: ModJS scripting and no hints (Casey, 2026-11-13)
+- [x] Optional ModJS scripting: global `BarelyPipes` (onTransfer, onNetworkChanged, networks, networkAt, tiers) through reflection, server scripts only, nothing recorded without ModJS or a listener; shared code in core/script, hooks in the transfer code of all ten builds; 6 Rhino-driven unit tests (events, reads, a failing listener, client scripts get no global, reload) and 7 self test checks on NeoForge 1.21.1 (242 checks pass without ModJS installed, real fluid and item transfers seen by the API) (w:4)
+- [x] Scripting docs: docs/scripting.md, wiki page scripting in the draft folder with its nav entry (not deployed), one feature line in the CurseForge description (w:1)
+- [x] Hints removed from the game: 23 lang keys and the code behind them (button description tooltips, filter and priority place hints, filter slot hints, Storage Pipe item description, upgrade count line), two Conduit Tool messages shortened, parentheticals dropped from two filter look-at lines; a unit test keeps hint keys and instruction phrases out of the lang file; all ten builds compile (w:3)
+- [~] A client frame of the pipe screen with a hovered button, one Forge and one NeoForge build: the dev tour's pipescreen step opens the menu on the server (PipeConfigMenu confirmed in the log) but the client screen never showed in the viewer tour on NeoForge 26.2 in four launches, so no frame; the changes are tooltip-only, covered by the lang test and the compile (w:1)
+- [ ] 2026.11.6 pushed, CI green on the changed builds (all ten), tagged and uploaded (PM; all ten modules are at 2026.11.6) (w:2)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.11.6
+
+- New: optional ModJS scripting. With ModJS installed, server scripts get a `BarelyPipes` global: `onTransfer` (a network moved items, fluid, energy or gas), `onNetworkChanged` (a network was created, changed or removed), `networks()`, `networkAt(...)` and the speed table `tiers()`. It only watches; it never changes a pipe. Without ModJS nothing is loaded or recorded. All ten builds. See docs/scripting.md.
+- Removed: hint text. The explanatory tooltips on the face mode, distribution mode, filter and priority buttons, the "click with ..." lines on the filter and upgrade places, the Storage Pipe item description and the "Takes N upgrades" line are gone; buttons keep their plain names, and the Show Me What This Is, Jade and WTHIT filter lines no longer explain what an empty list does. The Conduit Tool run messages say only that a run started.
+
 ## 2026.11.5 (Forge and NeoForge 26.3 only)
 
 - Fixed: ghost slots on the plug screens ignored left clicks and right clicks on Minecraft 26.3. Minecraft 26.3 renumbered the mouse buttons (left is now 1, middle 2, right 3), and the mod still compared clicks against 0 and 1. The other eight builds are unchanged and stay at 2026.11.4.

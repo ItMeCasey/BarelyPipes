@@ -1,6 +1,10 @@
 package com.itmecasey.barelypipes.conduit.transfer;
 
+import com.itmecasey.barelypipes.core.script.ScriptHub;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.BiConsumer;
 import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
@@ -29,6 +33,28 @@ public final class LaneState {
             spent = snapshot;
         }
     };
+
+    /** What was moved since the last {@link #drainMoved}, by resource id; only filled while scripts are enabled. */
+    private Map<String, Long> movedPending;
+
+    /** Notes that {@code amount} of the resource {@code id} moved in this step, for the script events. */
+    void moved(String id, long amount) {
+        if (amount > 0 && ScriptHub.tracking()) {
+            if (movedPending == null) {
+                movedPending = new LinkedHashMap<>();
+            }
+            movedPending.merge(id, amount, Long::sum);
+        }
+    }
+
+    /** Hands over what was moved since the last call, one entry per resource, and forgets it. */
+    void drainMoved(BiConsumer<String, Long> sink) {
+        if (movedPending != null && !movedPending.isEmpty()) {
+            Map<String, Long> now = movedPending;
+            movedPending = null;
+            now.forEach(sink);
+        }
+    }
 
     LaneState(long seed) {
         this.random = new Random(seed);

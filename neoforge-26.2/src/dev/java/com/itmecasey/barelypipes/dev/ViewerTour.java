@@ -57,6 +57,8 @@ final class ViewerTour {
         try {
             switch (parts[0]) {
                 case "inv" -> mc.setScreenAndShow(new InventoryScreen(mc.player));
+                case "pipebuild" -> ShotTour.buildPipe();
+                case "pipescreen" -> ShotTour.openPipeScreen();
                 case "give" -> ShotTour.server("give @p " + arg);
                 case "esc" -> mc.setScreenAndShow(null);
                 case "move" -> move(mc, arg);

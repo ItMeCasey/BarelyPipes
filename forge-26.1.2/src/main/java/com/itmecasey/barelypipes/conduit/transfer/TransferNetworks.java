@@ -1,7 +1,11 @@
 package com.itmecasey.barelypipes.conduit.transfer;
 
 import com.itmecasey.barelypipes.core.conduit.PipeType;
+import com.itmecasey.barelypipes.core.script.ScriptHub;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
@@ -66,7 +70,35 @@ public final class TransferNetworks {
         for (BlockPos member : fresh.members()) {
             data.networks.put(new LaneKey(member, type.lane()), fresh);
         }
+        if (ScriptHub.tracking()) {
+            publishToScripts(level, fresh);
+        }
         return fresh;
+    }
+
+    /** The dimension id scripts see, such as {@code minecraft:overworld}. */
+    public static String dimensionOf(Level level) {
+        return level.dimension().identifier().toString();
+    }
+
+    private static ScriptHub.Pos scriptPos(BlockPos pos) {
+        return new ScriptHub.Pos(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    /** Gives a freshly built network to the script API as plain data; only called when a script is enabled. */
+    private static void publishToScripts(Level level, LaneNetwork network) {
+        List<ScriptHub.Pos> bundles = new ArrayList<>(network.members().size());
+        for (BlockPos member : network.members()) {
+            bundles.add(scriptPos(member));
+        }
+        List<ScriptHub.Endpoint> endpoints = new ArrayList<>(network.endpoints().size());
+        for (NetworkEndpoint endpoint : network.endpoints()) {
+            endpoints.add(new ScriptHub.Endpoint(scriptPos(endpoint.bundle()), endpoint.face().name().toLowerCase(Locale.ROOT),
+                    scriptPos(endpoint.target()), endpoint.mode().name().toLowerCase(Locale.ROOT), endpoint.pulls(), endpoint.pushes(),
+                    endpoint.priority()));
+        }
+        ScriptHub.publish(dimensionOf(level), network.type(), scriptPos(network.leader()), bundles, endpoints, network.amountPerTick(),
+                network.ticksPerOperation(), network.itemsPerOperation(), network.truncated());
     }
 
     /** The memory kept by the leader of a lane, created on first use. */
@@ -89,6 +121,9 @@ public final class TransferNetworks {
         }
         LevelData data = data(level);
         data.version++;
+        if (ScriptHub.tracking()) {
+            ScriptHub.forgetBundle(dimensionOf(level), scriptPos(pos));
+        }
         for (int lane = 0; lane < PipeType.LANES; lane++) {
             LaneKey key = new LaneKey(pos, lane);
             data.networks.remove(key);

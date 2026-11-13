@@ -36,6 +36,8 @@ public class BarelyPipes {
                 LOGGER.warn("barelypipes.dev is set but this build has no development tools");
             }
         }
+        // Optional ModJS scripting: the global BarelyPipes, only when ModJS is installed (see docs/scripting.md).
+        com.itmecasey.barelypipes.core.script.ModJsBridge.install(com.itmecasey.barelypipes.core.script.PipeScripts.API);
         LOGGER.info("Barely Pipes loaded (NeoForge 26.1.2)");
     }
 }

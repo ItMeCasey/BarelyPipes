@@ -16,6 +16,7 @@ Docs and recipes: [itmecasey.com/wiki/barelypipes](https://itmecasey.com/wiki/ba
 - **A pipe screen:** right-click a pipe where it meets a face for a screen made of glyphs with modes, distribution, throughput, upgrade slots, filter and priority.
 - **Two tools:** the Pipe Wrench cycles a face's mode (sneak: the distribution mode), and the Conduit Tool edits, removes, removes a whole run, copies, pastes (also along a run) and inspects.
 - **Claim friendly:** the Conduit Tool asks the standard permission events before it changes or removes pipes, so claim mods can veto it.
+- **Scripting:** with ModJS installed, server scripts get a `BarelyPipes` global to listen for transfers and network changes and to read networks and the tier speeds.
 
 ![The pipes](https://raw.githubusercontent.com/ItMeCasey/BarelyPipes/main/branding/banners/h_pipes.png)
 
@@ -45,8 +46,6 @@ Docs and recipes: [itmecasey.com/wiki/barelypipes](https://itmecasey.com/wiki/ba
 The pictures on this page are illustrations drawn for the listing, not game screenshots.
 
 ![FAQ](https://raw.githubusercontent.com/ItMeCasey/BarelyPipes/main/branding/banners/h_faq.png)
-
-**Which jar do I use?** The one named for your loader and Minecraft version: `barelypipes-<loader>-mc<mc>-<release>.jar`, where the loader is `forge` or `neoforge`. There is one jar per loader for each of the five Minecraft versions.
 
 **Does it need to be on the server?** Yes, on the server and on every client.
 

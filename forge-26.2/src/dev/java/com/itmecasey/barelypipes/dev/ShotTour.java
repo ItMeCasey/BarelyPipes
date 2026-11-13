@@ -391,6 +391,28 @@ public final class ShotTour {
         then(2, () -> onServer(srv -> srv.getPlayerList().getPlayers().get(0).closeContainer()));
     }
 
+    /** The viewer script's pipebuild step: one gold item pipe in import mode next to a chest, ahead of the player. */
+    static void buildPipe() {
+        onServer(srv -> {
+            BlockPos pos = new BlockPos(60, ground, 0);
+            srv.overworld().setBlock(new BlockPos(pos.getX() + 1, ground, 0), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+            ConduitBundleBlockEntity entity = place(pos);
+            entity.addPipe(PipeType.ITEM, Tier.GOLD);
+            entity.refreshConnections();
+            entity.bundle().setMode(PipeType.ITEM.lane(), Face.EAST, ConnectionMode.IMPORT);
+            entity.refreshConnections();
+            entity.changed();
+        });
+    }
+
+    /** The viewer script's pipescreen step: opens the pipe screen of the pipe that pipebuild made (give the client a moment to get it first). */
+    static void openPipeScreen() {
+        onServer(srv -> {
+            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) srv.overworld().getBlockEntity(new BlockPos(60, ground, 0));
+            PipeConfigMenu.open(srv.getPlayerList().getPlayers().get(0), entity, PipeType.ITEM, Face.EAST);
+        });
+    }
+
     private static ConduitBundleBlockEntity place(BlockPos pos) {
         MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
         server.overworld().setBlock(pos, ModBlocks.CONDUIT_BUNDLE.get().defaultBlockState(), Block.UPDATE_ALL);

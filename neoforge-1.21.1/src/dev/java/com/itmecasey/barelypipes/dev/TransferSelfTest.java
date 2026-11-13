@@ -10,6 +10,10 @@ import com.itmecasey.barelypipes.core.conduit.EndpointSettings;
 import com.itmecasey.barelypipes.core.conduit.Face;
 import com.itmecasey.barelypipes.core.conduit.PipeType;
 import com.itmecasey.barelypipes.core.conduit.PipeUpgrades;
+import com.itmecasey.barelypipes.core.script.NetworkInfo;
+import com.itmecasey.barelypipes.core.script.PipeScripts;
+import com.itmecasey.barelypipes.core.script.ScriptHub;
+import com.itmecasey.barelypipes.conduit.transfer.TransferNetworks;
 import com.itmecasey.barelypipes.registry.ModBlocks;
 import com.itmecasey.barelypipes.registry.ModItems;
 import java.util.ArrayList;
@@ -124,6 +128,43 @@ final class TransferSelfTest {
         tick = 0;
         finished = false;
         built = false;
+        // The script API (what ModJS scripts see as BarelyPipes), listened to from plain Java: events and snapshots of the real transfers.
+        ScriptHub.reset();
+        scriptFluid = 0;
+        scriptItems = 0;
+        scriptNetworkEvents = 0;
+        PipeScripts.API.onTransfer(e -> {
+            if (e.type().equals("fluid")) {
+                scriptFluid += e.amount();
+            } else if (e.type().equals("item")) {
+                scriptItems += e.amount();
+            }
+        });
+        PipeScripts.API.onNetworkChanged(e -> scriptNetworkEvents++);
+    }
+
+    private static long scriptFluid;
+    private static long scriptItems;
+    private static int scriptNetworkEvents;
+
+    private static void checkScripts() {
+        String dimension = TransferNetworks.dimensionOf(level);
+        NetworkInfo network = PipeScripts.API.networkAt(dimension, plain.bundles().get(0).getX(), plain.bundles().get(0).getY(),
+                plain.bundles().get(0).getZ(), "fluid");
+        SelfTest.check("scripts: the plain fluid line is a network the script API can read", network != null);
+        if (network != null) {
+            SelfTest.check("scripts: it has the three bundles, an iron tier and the iron rate",
+                    network.bundleCount() == 3 && network.tier().equals("iron") && network.amountPerTick() == 250);
+            SelfTest.check("scripts: it has one source and one destination", network.sources().size() == 1 && network.destinations().size() == 1);
+            SelfTest.check("scripts: its moved total is what its tanks lost (" + network.moved() + " mB)",
+                    network.moved() == 1000 - tankAmount(plain.source()) && network.lastResource().equals("minecraft:water"));
+        }
+        SelfTest.check("scripts: the transfer events saw fluid and items move (" + scriptFluid + " mB, " + scriptItems + " items)",
+                scriptFluid > 0 && scriptItems > 0);
+        SelfTest.check("scripts: network events fired for the networks built (" + scriptNetworkEvents + ")", scriptNetworkEvents > 0);
+        SelfTest.check("scripts: the speed table has the iron fluid pipe at 250 mB per tick",
+                PipeScripts.API.tier("fluid", "iron").amountPerTick() == 250);
+        ScriptHub.reset();
     }
 
     private static void build() {
@@ -290,6 +331,7 @@ final class TransferSelfTest {
             checkItems();
             checkPersistence();
             checkEndpointItems();
+            checkScripts();
         }
         if (tick >= LAST_CHECK) {
             finished = true;

@@ -94,6 +94,7 @@ final class ItemMover implements ResourceMover {
                 TransferFaults.report(sink.endpoint.target(), e);
             }
         }
+        state.moved(id, preview.getCount() - remaining.getCount());
         if (!remaining.isEmpty()) {
             // Nobody took the rest after all; return it, and drop it as a last resort so nothing vanishes.
             remaining = ItemHandlerHelper.insertItem(source.handler, remaining, false);

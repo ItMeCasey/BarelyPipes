@@ -2,6 +2,7 @@ package com.itmecasey.barelypipes.conduit.transfer;
 
 import com.itmecasey.barelypipes.conduit.ConduitBundleBlockEntity;
 import com.itmecasey.barelypipes.core.conduit.PipeType;
+import com.itmecasey.barelypipes.core.script.ScriptHub;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 
@@ -33,7 +34,10 @@ public final class TransferEngine {
             try {
                 LaneNetwork network = TransferNetworks.networkFor(level, pos, type);
                 if (network != null && network.leader().equals(pos)) {
-                    mover.run(level, network, TransferNetworks.stateFor(level, pos, type.lane()));
+                    LaneState state = TransferNetworks.stateFor(level, pos, type.lane());
+                    mover.run(level, network, state);
+                    state.drainMoved((id, amount) -> ScriptHub.transferred(TransferNetworks.dimensionOf(level), type,
+                            new ScriptHub.Pos(pos.getX(), pos.getY(), pos.getZ()), id, amount));
                 }
             } catch (RuntimeException e) {
                 // One broken neighbor must not stop the server; the next tick tries again.

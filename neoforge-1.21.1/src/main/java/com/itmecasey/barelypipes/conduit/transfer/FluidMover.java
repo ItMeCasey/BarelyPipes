@@ -67,7 +67,9 @@ final class FluidMover implements ResourceMover {
         for (Held sink : sinks) {
             sinkPorts.add(new FluidPort(sink, fluid, sink.endpoint.allows(id)));
         }
-        state.spend(gameTime, AmountMover.move(sourcePorts, sinkPorts, modes.toArray(new DistributionMode[0]), limit, state));
+        long moved = AmountMover.move(sourcePorts, sinkPorts, modes.toArray(new DistributionMode[0]), limit, state);
+        state.spend(gameTime, moved);
+        state.moved(id, moved);
     }
 
     /**

@@ -63,7 +63,7 @@ final class ChemicalMover {
         for (Held sink : sinks) {
             sinkPorts.add(new ChemicalPort(sink, chemical, sink.endpoint.allows(id)));
         }
-        AmountMover.move(sourcePorts, sinkPorts, modes.toArray(new DistributionMode[0]), limit, state);
+        state.moved(id, AmountMover.move(sourcePorts, sinkPorts, modes.toArray(new DistributionMode[0]), limit, state));
     }
 
     /**

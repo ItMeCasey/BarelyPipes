@@ -34,7 +34,7 @@ final class EnergyMover implements ResourceMover {
                 sinks.add(port);
             }
         }
-        AmountMover.move(sources, sinks, modes.toArray(new DistributionMode[0]), limit, state);
+        state.moved("energy", AmountMover.move(sources, sinks, modes.toArray(new DistributionMode[0]), limit, state));
     }
 
     /** A machine's energy storage. Energy has one kind, so no filtering is needed. */
