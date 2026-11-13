@@ -8,6 +8,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 /**
  * A raised gray glyph button for a setting with two states, such as a filter's whitelist and
@@ -55,8 +56,11 @@ public class ToggleGlyphButton extends AbstractButton {
     }
 
     private static Tooltip tooltip(Component name, Component details) {
-        return Tooltip.create(Component.empty().append(name).append("\n")
-                .append(details.copy().withStyle(ChatFormatting.GRAY)));
+        MutableComponent text = Component.empty().append(name);
+        if (details != null) {
+            text.append("\n").append(details.copy().withStyle(ChatFormatting.GRAY));
+        }
+        return Tooltip.create(text);
     }
 
     @Override

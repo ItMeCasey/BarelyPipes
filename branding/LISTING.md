@@ -52,7 +52,7 @@ Rebuild everything with `python branding/source/make_icon.py`, then `python bran
 
 ### Description
 
-The CurseForge description is in [`curseforge/DESCRIPTION.md`](../curseforge/DESCRIPTION.md). Paste it with the description type set to **Markdown**. Its images load from GitHub, so `branding/` has to be pushed first. Its Tested line says only what was run.
+The CurseForge description is in [`curseforge/DESCRIPTION.md`](../curseforge/DESCRIPTION.md). Paste it with the description type set to **Markdown**. Its images load from GitHub, so `branding/` has to be pushed first. It has no install steps and no test notes: it describes the mod only.
 
 ## Checklist
 
@@ -60,4 +60,4 @@ Done (verified 2026-11-09): `branding/` is on GitHub; the CurseForge project exi
 
 Still to check by hand: the GitHub social preview (`banners/social.png`, web UI only) and that the CurseForge files have passed review.
 
-Rules: the Tested lines live in three places only (`curseforge/DESCRIPTION.md`, the "What was checked" section of `README.md` and the table on the wiki page `known-gaps`); update them together. `icon/barelypipes_logo.png` is the mod list logo for the jar. No Modrinth upload (house rule): the listing is CurseForge only.
+Rules: test results live in `README.md` ("What was checked"), `PROJECT_STATUS.md`, `CHANGELOG.md` and the wiki page `known-gaps`, never in the CurseForge description. `icon/barelypipes_logo.png` is the mod list logo for the jar. No Modrinth upload (house rule): the listing is CurseForge only.

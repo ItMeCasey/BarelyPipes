@@ -175,17 +175,36 @@ def ae_recipes(fam):
     return {"me_pipe": me, "dense_me_pipe": dense}
 
 
+HINT_SUFFIXES = (".tooltip",)
+HINT_KEYS = (f"screen.{MODID}.pipe_config.endpoint_empty", f"screen.{MODID}.pipe_config.endpoint_installed",
+             f"screen.{MODID}.pipe_config.filter_slot.clear", f"screen.{MODID}.pipe_config.filter_slot.fluid",
+             f"screen.{MODID}.pipe_config.filter_slot.item", f"gui.{MODID}.upgrades.hint")
+HINT_TEXTS = {
+    f"message.{MODID}.tool_run_start": "Run started on a %s pipe",
+    f"message.{MODID}.tool_paste_run_start": "Run started",
+}
+
+
+def strip_hints(out):
+    """No hints (Casey, 2026-11-13): the explanatory tooltips, the click instructions and the usage sentences are not in the game."""
+    for k in list(out):
+        if k in HINT_KEYS or (k.endswith(HINT_SUFFIXES) and not k.startswith("tooltip." + MODID + ".tool_mode")):
+            del out[k]
+    out.update({k: v for k, v in HINT_TEXTS.items() if k in out})
+
+
 def lang():
     af = os.path.join(AF, "mc26.1.2", "neoforge", "src", "generated", "resources", "assets", "aeroflux", "lang", "en_us.json")
     src = json.load(open(af, encoding="utf-8"))
     keep = ("message.aeroflux.endpoint_upgrade", "message.aeroflux.pipe_", "message.aeroflux.protected", "message.aeroflux.tool_",
             "message.aeroflux.upgrade_", "connection_mode.", "distribution_mode.", "tool_mode.aeroflux", "tooltip.aeroflux.tool_mode",
             "screen.aeroflux.pipe_config", "pipe.aeroflux.", "upgrade.aeroflux.speed", "upgrade.aeroflux.capacity",
-            "upgrade.aeroflux.filter", "upgrade.aeroflux.priority", "tooltip.aeroflux.look.upgrades", "gui.aeroflux.upgrades.hint")
+            "upgrade.aeroflux.filter", "upgrade.aeroflux.priority", "tooltip.aeroflux.look.upgrades")
     out = {}
     for k, v in src.items():
         if any(k.startswith(p) for p in keep):
             out[k.replace("aeroflux", MODID)] = v.replace("AeroFlux", "Barely Pipes")
+    strip_hints(out)
     out[f"itemGroup.{MODID}"] = "Barely Pipes"
     out[f"block.{MODID}.conduit_bundle"] = "Pipe Bundle"
     out[f"pipe.{MODID}.storage"] = "Storage"
@@ -198,8 +217,6 @@ def lang():
     for pid, kind, tier in pipe_ids():
         label = NAMES[kind] + " Pipe"
         out[f"item.{MODID}.{pid}"] = (tier.capitalize() + " " + label) if tier else label
-    out[f"tooltip.{MODID}.storage_pipe"] = "Joins BarelyStorage networks. One fixed speed, no tiers."
-    out[f"tooltip.{MODID}.storage_pipe.missing"] = "BarelyStorage is not available for this Minecraft version, so this pipe only joins inventories."
     # Side names (the wrench message, the tool and the look-at overlays use them).
     for face in ("down", "up", "north", "south", "west", "east"):
         out.setdefault(f"face.{MODID}.{face}", face.capitalize())
@@ -211,8 +228,8 @@ def lang():
         ("sides", "Sides: %s"), ("side_mode", "%s (%s)"), ("no_sides", "No side is connected"),
         ("throughput", "Throughput: %s"), ("distribution", "Distribution: %s"),
         ("filter_whitelist", "Filter: whitelist, %s listed"), ("filter_blacklist", "Filter: blacklist, %s listed"),
-        ("filter_whitelist_empty", "Filter: whitelist, empty (stops everything)"),
-        ("filter_blacklist_empty", "Filter: blacklist, empty (lets everything through)"),
+        ("filter_whitelist_empty", "Filter: whitelist, empty"),
+        ("filter_blacklist_empty", "Filter: blacklist, empty"),
         ("priority", "Priority: %s"), ("others", "Also in this bundle: %s"), ("pipes", "Pipes: %s"),
     ]:
         out[f"smwti.{MODID}.{key}"] = text
