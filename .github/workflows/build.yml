@@ -6,35 +6,46 @@ on:
   pull_request:
 
 jobs:
+  plan:
+    # Picks the modules whose code changed in this push or pull request, so unchanged builds are never run.
+    # Docs, status, branding and workflow-only changes pick nothing. See .github/scripts/plan_matrix.py.
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      any: ${{ steps.plan.outputs.any }}
+      count: ${{ steps.plan.outputs.count }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - id: plan
+        run: python3 .github/scripts/plan_matrix.py build --before "${{ github.event.pull_request.base.sha || github.event.before }}" --sha "${{ github.sha }}"
+
   versions:
-    # Releases are tagged v<mod_version>, so every module must carry the same number.
+    # Releases are tagged v<mod_version> and publish the Minecraft versions whose Forge and NeoForge modules carry that
+    # number, so the two loaders of one Minecraft version must agree. Versions of different Minecraft versions may differ,
+    # because only the modules that changed are bumped.
+    needs: plan
+    if: needs.plan.outputs.any == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: All modules agree on mod_version
+      - name: Both loaders of each Minecraft version agree on mod_version
         run: |
-          versions=$(grep -h '^mod_version=' */gradle.properties | sort -u)
-          echo "$versions"
-          test "$(echo "$versions" | wc -l)" -eq 1
+          for mc in 1.20.1 1.21.1 26.1.2 26.2 26.3; do
+            versions=$(grep -h '^mod_version=' *-$mc/gradle.properties | sort -u)
+            echo "$mc: $versions"
+            test "$(echo "$versions" | wc -l)" -eq 1
+          done
 
   build:
     # Build, run the 98 common unit tests, and run the headless self test (a real server, a test tank, real chests and,
-    # on 26.x, a real BarelyStorage rack) for every module.
-    needs: versions
+    # on 26.x, a real BarelyStorage rack) for every module that changed.
+    needs: [plan, versions]
+    if: needs.plan.outputs.any == 'true'
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - {layer: neoforge-1.20.1, java: 17}
-          - {layer: forge-1.20.1, java: 17}
-          - {layer: neoforge-1.21.1, java: 21}
-          - {layer: forge-1.21.1, java: 21}
-          - {layer: neoforge-26.1.2, java: 25}
-          - {layer: forge-26.1.2, java: 25}
-          - {layer: neoforge-26.2, java: 25}
-          - {layer: forge-26.2, java: 25}
-          - {layer: neoforge-26.3, java: 25}
-          - {layer: forge-26.3, java: 25}
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
     runs-on: ubuntu-latest
     env:
       IMC_MAVEN_USER: ${{ secrets.IMC_MAVEN_USER }}
@@ -60,9 +71,9 @@ jobs:
             !${{ matrix.layer }}/build/libs/*-dev.jar
 
   package:
-    # The ten jars, one per loader and Minecraft version. Forge and NeoForge builds of a version share class names with
+    # One jar per built loader and Minecraft version. Forge and NeoForge builds of a version share class names with
     # different code, so they are never merged into one jar.
-    needs: build
+    needs: [plan, build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v5
@@ -73,7 +84,7 @@ jobs:
           mkdir -p dist
           cp layers/*/barelypipes-*.jar dist/
           ls -la dist
-          test "$(ls dist/*.jar | wc -l)" -eq 10
+          test "$(ls dist/*.jar | wc -l)" -eq ${{ needs.plan.outputs.count }}
       - name: The release jars hold no development tools
         run: |
           for jar in dist/*.jar; do

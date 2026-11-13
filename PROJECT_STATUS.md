@@ -1,6 +1,6 @@
 # Project Status
 <!-- status-format: 1 -->
-Updated: 2026-11-12
+Updated: 2026-11-13
 Summary: Barely Pipes 2026.11.4 is built and checked locally (plug arrows moved onto the plug sides on all ten builds, Jade and WTHIT and the rack top faces checked) but not yet pushed, tagged or released; 2026.11.3 is the released version; what is left is the 2026.11.4 release itself and the wiki redeploy.
 Spend: none
 
@@ -43,6 +43,7 @@ Spend: none
 ## Release and docs
 - [x] Ten jars per release, one per loader and Minecraft version (Forge and NeoForge builds share class names, so they are never combined); no dev classes inside (w:2)
 - [x] CI: build.yml green on main, release workflow ran green for v2026.11.1 and v2026.11.2 (GitHub run list, 2026-11-09) (w:3)
+- [~] CI builds and releases only the modules a change affects (.github/scripts/plan_matrix.py with unit tests; committed locally, not yet run on GitHub) (w:2)
 - [x] GitHub repository ItMeCasey/BarelyPipes, tags v2026.11.1 and v2026.11.2, pre-releases with ten jars each (w:2)
 - [x] CurseForge project 1787208 with ten beta files for 2026.11.2 and ten for 2026.11.1 (file list read through the API; review state not checked) (w:3)
 - [x] Branding, CurseForge description, README, CHANGELOG and issue templates (w:3)

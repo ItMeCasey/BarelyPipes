@@ -1,6 +1,6 @@
 name: release
 
-# Push a tag such as v2026.11.1 to build every module, collect the ten jars (one per loader and Minecraft version), publish a GitHub prerelease and upload to CurseForge. The tag must equal the mod_version of the
+# Push a tag such as v2026.11.1 to build the modules whose mod_version equals the tag, collect their jars (one per loader and Minecraft version), publish a GitHub prerelease and upload to CurseForge. The tag must equal the mod_version of the
 # builds that are published. A manual run only builds and attaches the jars to the run, unless "publish" is ticked.
 # Needs the repository secret CURSEFORGE_TOKEN (a CurseForge upload API token). Modrinth is deliberately not part of this.
 on:
@@ -26,21 +26,32 @@ permissions:
   contents: write
 
 jobs:
+  plan:
+    # Builds only the modules whose mod_version equals the tag (a manual run uses the NeoForge 26.1.2 version).
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      any: ${{ steps.plan.outputs.any }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - id: plan
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then release="${GITHUB_REF_NAME#v}"; else release=$(grep -h '^mod_version=' neoforge-26.1.2/gradle.properties | sed 's/^mod_version=//'); fi
+          python3 .github/scripts/plan_matrix.py release --tag "$release"
+      - name: Something must match the tag
+        if: steps.plan.outputs.any != 'true'
+        run: |
+          echo "No module has mod_version equal to the tag, so there is nothing to release"
+          exit 1
+
   build:
+    needs: plan
+    if: needs.plan.outputs.any == 'true'
     strategy:
       fail-fast: true
-      matrix:
-        include:
-          - {layer: neoforge-1.20.1, java: 17}
-          - {layer: forge-1.20.1, java: 17}
-          - {layer: neoforge-1.21.1, java: 21}
-          - {layer: forge-1.21.1, java: 21}
-          - {layer: neoforge-26.1.2, java: 25}
-          - {layer: forge-26.1.2, java: 25}
-          - {layer: neoforge-26.2, java: 25}
-          - {layer: forge-26.2, java: 25}
-          - {layer: neoforge-26.3, java: 25}
-          - {layer: forge-26.3, java: 25}
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
     runs-on: ubuntu-latest
     env:
       IMC_MAVEN_USER: ${{ secrets.IMC_MAVEN_USER }}
@@ -67,7 +78,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    needs: build
+    needs: [plan, build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
