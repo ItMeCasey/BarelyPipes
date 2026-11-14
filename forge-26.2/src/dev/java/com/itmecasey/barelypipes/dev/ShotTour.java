@@ -391,10 +391,10 @@ public final class ShotTour {
         then(2, () -> onServer(srv -> srv.getPlayerList().getPlayers().get(0).closeContainer()));
     }
 
-    /** The viewer script's pipebuild step: one gold item pipe in import mode next to a chest, ahead of the player. */
+    /** The viewer script's pipebuild step: one gold item pipe in import mode next to a chest, within reach of the player (a menu closes when the player is too far from its block). */
     static void buildPipe() {
         onServer(srv -> {
-            BlockPos pos = new BlockPos(60, ground, 0);
+            BlockPos pos = new BlockPos(3, ground, 0);
             srv.overworld().setBlock(new BlockPos(pos.getX() + 1, ground, 0), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
             ConduitBundleBlockEntity entity = place(pos);
             entity.addPipe(PipeType.ITEM, Tier.GOLD);
@@ -408,7 +408,7 @@ public final class ShotTour {
     /** The viewer script's pipescreen step: opens the pipe screen of the pipe that pipebuild made (give the client a moment to get it first). */
     static void openPipeScreen() {
         onServer(srv -> {
-            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) srv.overworld().getBlockEntity(new BlockPos(60, ground, 0));
+            ConduitBundleBlockEntity entity = (ConduitBundleBlockEntity) srv.overworld().getBlockEntity(new BlockPos(3, ground, 0));
             PipeConfigMenu.open(srv.getPlayerList().getPlayers().get(0), entity, PipeType.ITEM, Face.EAST);
         });
     }
