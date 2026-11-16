@@ -6,7 +6,7 @@ BarelyStorage network). Every other module is the same mod on another loader or 
 
 ## Where the code comes from
 
-AeroFlux (`C:\Users\casey\Desktop\AeroFlux\versions\mc<mc>\<loader>`) has the pipe code for 1.20.1, 1.21.1 and 26.1.2 on both
+AeroFlux (`C:\Users\casey\Desktop\Minecraft Projects\AeroFlux\versions\mc<mc>\<loader>`) has the pipe code for 1.20.1, 1.21.1 and 26.1.2 on both
 loaders. It has nothing for 26.2 and 26.3: derive those from the 26.1.2 module of the same loader and apply the API changes
 (BarelyPowered and BarelyStorage already run on 26.2 and 26.3 on both loaders: diff their `version-26.1.2`, `version-26.2` and
 `version-26.3` folders and their loader layers to find what changed, for example 26.3 has no `codec()` MapCodec on blocks,
@@ -39,7 +39,7 @@ what that was, diff a reference file against its AeroFlux original after renamin
    `PipeConfigActions` and `ConduitToolActions` take `ITEM, STORAGE`. BarelyStorage exists only for 26.1.2, 26.2 and 26.3:
    on 1.20.1 and 1.21.1 keep the STORAGE case in `Connections` (item handlers only), leave `StorageLink` out and no recipe (the asset
    script already skips the recipe for those versions); BarelyStorage's jar for compile is `libs/barelystorage-mc<mc>.jar`
-   (copy from `C:\Users\casey\Desktop\BarelyStorage\dist\barelystorage-mc<mc>-2026.11.1.jar`; 26.1.2 is already there).
+   (copy from `C:\Users\casey\Desktop\Minecraft Projects\BarelyStorage\dist\barelystorage-mc<mc>-2026.11.1.jar`; 26.1.2 is already there).
 4a. Gas pipe: Mekanism only has builds for 1.20.1 (Forge and NeoForge) and 1.21.1 (NeoForge). Those three modules carry
    `compat/mekanism/MekanismCompat` (ModList check, the only class other code calls), `MekanismGas` (1.20.1) or
    `MekanismChemicals` (1.21.1), `conduit/transfer/ChemicalMover`, a `GasMover` that calls it when Mekanism is loaded, a
@@ -61,7 +61,7 @@ what that was, diff a reference file against its AeroFlux original after renamin
 ## Build setup per module
 
 Copy `build.gradle`, `gradle.properties`, `settings.gradle`, `gradlew*`, `gradle/` and the metadata template from the matching
-BarelyPowered layer (`C:\Users\casey\Desktop\BarelyPowered\<loader>-<mc>`; 1.20.1 has no BarelyPowered layer, take AeroFlux's
+BarelyPowered layer (`C:\Users\casey\Desktop\Minecraft Projects\BarelyPowered\<loader>-<mc>`; 1.20.1 has no BarelyPowered layer, take AeroFlux's
 module for that). Make the same edits the reference module's `build.gradle` has: shared `../common` sources, resources and tests,
 the `-PdevTools` block, AE2 compile-only (Modrinth Maven, `ae2_version` property: look up the id used in AeroFlux's
 `gradle.properties` for that version) and BarelyStorage compile-only. Forge jars need a `pack.mcmeta` in

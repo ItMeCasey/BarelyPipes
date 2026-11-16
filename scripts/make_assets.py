@@ -16,8 +16,8 @@ import shutil
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEMPLATE = r"C:\Users\casey\Desktop\AeroFlux-Pipe-Template"
-AF = r"C:\Users\casey\Desktop\AeroFlux\versions"
+TEMPLATE = r"C:\Users\casey\Desktop\Minecraft Projects\AeroFlux-Pipe-Template"
+AF = r"C:\Users\casey\Desktop\Minecraft Projects\AeroFlux\versions"
 MODID = "barelypipes"
 TIERS = ["iron", "gold", "diamond"]
 TIERED = ["fluid", "item", "energy", "gas"]

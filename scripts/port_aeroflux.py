@@ -6,7 +6,7 @@ Only used while bootstrapping; the copied sources are owned by this repo afterwa
 """
 import os, re, shutil, sys
 
-AF = r"C:\Users\casey\Desktop\AeroFlux\versions"
+AF = r"C:\Users\casey\Desktop\Minecraft Projects\AeroFlux\versions"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KEEP = [
     "conduit", "save", "protect", "world/OutlineParticles.java", "Ids.java",
